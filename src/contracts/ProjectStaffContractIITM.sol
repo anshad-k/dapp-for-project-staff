@@ -23,8 +23,8 @@ contract projectStaffContractIITM {
         string title;
         string description;
         ProjectStatus status;
-        string startDate;
-        string endDate;
+        uint256 startDate;
+        uint256 endDate;
         uint salary;
         address payable projectStaffAddress;
         address payable[] faculties;
@@ -107,8 +107,8 @@ contract projectStaffContractIITM {
     function addProject(
       string calldata _title,
       string calldata _description,
-      string calldata _startDate,
-      string calldata _endDate,
+      uint256 _startDate,
+      uint256 _endDate,
       uint _salary,
       uint256[] calldata _facultyAddresses
     ) external returns (uint) {
@@ -141,27 +141,8 @@ contract projectStaffContractIITM {
       return 2;
     }
 
-    function scheduleSalaryTransaction(uint _projectId) private returns (uint) {
-      if( _projectId > projects.length) {
-        return 4;
-      }
-      Project storage project = projects[_projectId - 1];
-      if(staffMap[project.projectStaffAddress] == 0) {
-        return 4;
-      }
-      
-      if(project.status != ProjectStatus.APPROVED) {
-        return 5;
-      }
-      if(project.endDate < block.timestamp) {
-        return 6;
-      }
-      project.projectStaffAddress.transfer(project.salary);
-      project.status = ProjectStatus.COMPLETED;
-      return 2;
-    }
 
-    function approveProject(uint calldata _projectId, bool calldata approval) external returns (uint) {
+    function approveProject(uint _projectId, bool _approval) external returns (uint) {
       if(facultyMap[msg.sender] == 0 || _projectId > projects.length) {
         return 4;
       }
@@ -172,9 +153,8 @@ contract projectStaffContractIITM {
       if(project.currentApprover != msg.sender) {
         return 6;
       }
-      if(approval) {
+      if(_approval) {
         project.status = ProjectStatus.APPROVED;
-        scheculeSalaryTransaction(_projectId);
       } else {
         project.status = ProjectStatus.REJECTED;
       }
@@ -182,10 +162,10 @@ contract projectStaffContractIITM {
     }
 
     function getExtension(
-        uint calldata _projectId, 
-        string calldata _newEndDate,
+        uint _projectId, 
+        uint256 _newEndDate
       ) external returns (uint) {
-      if(projectStaffs[msg.sender] == 0 || _projectId > projects.length) {
+      if(staffMap[msg.sender] == 0 || _projectId > projects.length) {
         return 4;
       }
       Project storage project = projects[_projectId - 1];
@@ -194,6 +174,25 @@ contract projectStaffContractIITM {
       }
       project.status = ProjectStatus.EXTENSION;
       project.endDate = _newEndDate;
+      return 2;
+    }
+
+    function makePayments() external returns (uint) {
+      if(admin != msg.sender) { // caller should be admin
+        return 4;
+      }
+      for(uint i = 0; i < projects.length; i++) {
+        Project storage project = projects[i];
+        if(project.status == ProjectStatus.APPROVED) {
+          if(block.timestamp >= project.endDate) {
+              if(admin.balance <= project.salary) {
+                return 5;
+              }
+              project.projectStaffAddress.transfer(project.salary);
+          }
+          project.status = ProjectStatus.COMPLETED;
+        }
+      }
       return 2;
     }
 
@@ -212,8 +211,5 @@ contract projectStaffContractIITM {
 
     function uint256ToAddress(uint256 _uint) private pure returns (address) {
         return address(uint160(_uint));
-    }
-
-    function tokenAssoTrans(int64 _amount) external {        
     }
 }
