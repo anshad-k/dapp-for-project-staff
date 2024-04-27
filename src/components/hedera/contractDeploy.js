@@ -5,7 +5,7 @@ import {
 	ContractFunctionParameters,
 } from "@hashgraph/sdk";
 
-async function contractDeployFcn(walletData, accountId, tokenId) {
+async function contractDeployFcn(walletData, accountId) {
 	console.log(`\n=======================================`);
 	console.log(`- Deploying smart contract on Hedera...`);
 
@@ -28,7 +28,7 @@ async function contractDeployFcn(walletData, accountId, tokenId) {
 		.setBytecodeFileId(bytecodeFileId)
 		.setGas(3000000)
 		.setConstructorParameters(
-			new ContractFunctionParameters().addAddress(tokenId.toSolidityAddress())
+			new ContractFunctionParameters().addAddress(NaN)
 		)
 		.freezeWithSigner(signer);
 	const contractCreateSubmit = await contractCreateTx.executeWithSigner(signer);

@@ -1,8 +1,8 @@
 import { ContractFunctionParameters, ContractExecuteTransaction } from "@hashgraph/sdk";
 
-async function contractExecuteFcn(walletData, accountId, contractId) {
+async function isAdmin(walletData, accountId, contractId) {
 	console.log(`\n=======================================`);
-	console.log(`- Executing the smart contract...`);
+	console.log(`- Checking Admin privilage in the contract...`);
 
 	const hashconnect = walletData[0];
 	const saveData = walletData[1];
@@ -13,19 +13,18 @@ async function contractExecuteFcn(walletData, accountId, contractId) {
 	const contractExecTx = await new ContractExecuteTransaction()
 		.setContractId(contractId)
 		.setGas(3000000)
-		.setFunction("tokenAssoTrans", new ContractFunctionParameters())
+		.setFunction("loginAdmin", new ContractFunctionParameters())
 		.freezeWithSigner(signer);
+
 	const contractExecSign = await contractExecTx.signWithSigner(signer);
 	const contractExecSubmit = await contractExecSign.executeWithSigner(signer);
 	const contractExecRx = await provider.getTransactionReceipt(contractExecSubmit.transactionId);
-	console.log(`- Token transfer from Operator to contract: ${contractExecRx.status.toString()}`);
 
-	const bCheck = await signer.getAccountBalance();
-	console.log(
-		`- Operator balance: ${bCheck.hbars.toTinybars()} tinybars = ${bCheck.hbars.toHbars()} ℏ`
-	);
+  console.log(`- Faculty details: ${contractExecRx.returnValues[0]}`);
 
-	return contractExecSubmit.transactionId;
+	return contractExecRx.returnValues[0] === 2;
 }
 
-export default contractExecuteFcn;
+export {
+  isAdmin
+};

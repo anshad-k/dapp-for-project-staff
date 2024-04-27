@@ -52,6 +52,13 @@ contract projectStaffContractIITM {
         admin = payable(msg.sender);
      }
 
+    function loginAdmin() external view returns (uint) {
+      if(admin != msg.sender) {
+        return 4;
+      }
+      return 2;
+    }
+
     function registerFaculty(
         string calldata _name, 
         string calldata _department,
