@@ -5,8 +5,10 @@ import getFacultyDetailsFcn from '../hedera/getFacultyDetails';
 import getProjectDetailsFcn from '../hedera/getProjectDetails';
 import './AdminPage.css';
 import makePayments from '../hedera/makePayments';
-import contractDeleteFcn from '../hedera/contractDelete';
 import MyLog from '../MyLog';
+import { isAdmin } from '../hedera/contractUtils';
+import {adminContractDeploy, adminContractDelete} from '../../adminContractFncs';
+import contractDeleteFcn from '../hedera/contractDelete';
 
 const AdminPage = ({walletData, accountId, setPage}) => {
   const [contractId, setContractId] = useState();
@@ -17,16 +19,28 @@ const AdminPage = ({walletData, accountId, setPage}) => {
   async function contractDeploy() {
 		if (contractId !== undefined) {
 			setLogText(`You already have contract ${contractId} ✅`);
-		} else {
+
+		} else if(!walletData || !accountId) {
+      setLogText("No wallet connected");
+      setPage("home");
+    }
+     else {
 			const [cId, txIdRaw] = await contractDeployFcn(walletData, accountId);
+      // const [cId, txIdRaw] = await adminContractDeploy();
+
 			setContractId(cId);
 			setLogText(`Successfully deployed smart contract with ID: ${cId} ✅`);
 		}
 	}
 
   const fetchData = async () => {
-    if(!contractId) 
+    if(!contractId) {
+      setLogText("No contracts deployed ...");
       return;
+    }
+    if(isAdmin(walletData, accountId, contractId)) {
+      setLogText("You are admin!!!!!")
+    }
     setFaculties((await getFacultyDetailsFcn(walletData, accountId, contractId)));
     setProjects((await getProjectDetailsFcn(walletData, accountId, contractId)));
   };
@@ -59,10 +73,11 @@ const AdminPage = ({walletData, accountId, setPage}) => {
         />
         <MyGroup 
           fcn={() =>{
-            contractDeleteFcn(walletData, accountId, contractId);
-            setContractId(null);
+            if(contractId) {
+              contractDeleteFcn(walletData, accountId, contractId);
+            }
           }}
-          buttonLabel={"Fetch Data"}  
+          buttonLabel={"Delete Contract"} 
         />
         <MyGroup 
           fcn={() => setPage("home")}

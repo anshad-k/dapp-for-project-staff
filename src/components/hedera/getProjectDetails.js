@@ -12,7 +12,7 @@ async function getProjectDetailsFcn(walletData, accountId, contractId) {
 	//Execute a contract function (transfer)
 	const contractExecTx = await new ContractExecuteTransaction()
 		.setContractId(contractId)
-		.setGas(3000000)
+		.setGas(300000000)
 		.setFunction("getAllProjects", new ContractFunctionParameters())
 		.freezeWithSigner(signer);
 

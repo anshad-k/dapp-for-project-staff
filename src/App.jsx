@@ -1,21 +1,22 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import MyGroup from "./components/MyGroup.jsx";
 import walletConnectFcn from "./components/hedera/walletConnect.js";
 import AdminPage from "./components/admin/AdminPage.jsx";
 import "./styles/App.css";
 import MyLog from "./components/MyLog.jsx";
 import { isAdmin } from "./components/hedera/contractUtils.js";
-import getContractId from "./getContractId.js";
+import StaffPage from "./components/staff/StaffPage.jsx";
+import FacultyPage from "./components/faculty/FacultyPage.jsx";
 
 function App() {
 	const [walletData, setWalletData] = useState();
 	const [accountId, setAccountId] = useState();
-	const [contractId, setContractId] = useState(getContractId());
+	const [contractId, setContractId] = useState();
 
 
 	const [logTextSt, setlogTextSt] = useState("🔌 Connect hashpack wallet here...");
 
-	const [page, setPage] = useState("home");
+	const [page, setPage] = useState('home');
 
 	async function connectWallet() {
 		if (accountId !== undefined) {
@@ -32,7 +33,8 @@ function App() {
 			setWalletData(wData);
 		}
 	}
-	if(page === "home") {
+	console.log('page:', page);
+	if(page === 'home') {
 	return (
 			<div className="App">
 				<h1 className="header">DAPP for IITM Project Staff</h1>
@@ -47,24 +49,32 @@ function App() {
 					fcn = {() => {
 						if(!accountId) {
 							setlogTextSt("🔌 Connect wallet first... ⚡ ❌");
-						} else if(!contractId) {
-							setlogTextSt("Contract is not deployed... ❌");
-						} else if(!isAdmin(walletData, accountId, contractId)) {
-							setlogTextSt("Access Denied! Only Admins can access this page... ❌");
-						} else {
-							setPage("admin");
+							return;
 						}
+						setPage("admin");
 					}}
 					buttonLabel = {"Contract Admin"}
 				/>
 
 				<MyGroup
-					fcn = {() => setPage("staff")}
+					fcn = {() => {
+						if(!accountId) {
+							setlogTextSt("🔌 Connect wallet first... ⚡ ❌");
+							return;
+						}
+						setPage("staff");
+					}}
 					buttonLabel = {"Project Staff"}
 				/>
 
 				<MyGroup
-					fcn = {() => setPage("faculty")}
+					fcn = {() => {
+						if(!accountId) {
+							setlogTextSt("🔌 Connect wallet first... ⚡ ❌");
+							return;
+						}
+						setPage("faculty");
+					}}
 					buttonLabel = {"IITM Faculty"}
 				/>
 				<div className="logo">
@@ -86,8 +96,16 @@ function App() {
 				</div>
 			</div>
 		);
-	} else {
+	} 
+	else if(page === 'admin') {
 		return <AdminPage walletData={walletData} accountId={accountId} setPage={setPage}/>;
-	}
+	} 
+	else if(page === 'staff') {
+		return <StaffPage walletData={walletData} accountId={accountId} contractId={contractId} setPage={setPage}/>;
+	} 
+	else if(page === 'faculty') {
+		return <FacultyPage walletData={walletData} accountId={accountId} contractId={contractId} setPage={setPage}/>;
+	} 
+	return <></>;
 }
 export default App;

@@ -1,0 +1,61 @@
+.faculty {
+  width: 100%;
+	min-height: 800px;
+	text-align: center;
+  flex: 1 0 auto;
+  background-color: #1366cb;
+}
+
+.faculty .navbar {
+  background-color: #07acb8;
+  width: 90%;
+  height: 55px;
+  display: flex;
+  /* justify-content: space-between; */
+  gap: 50px;
+  justify-content: right;
+  padding: 20px 5%;
+}
+
+.faculty .navbar h1{
+  margin: 0;
+  padding: 0;
+  line-height: 50px;
+  font-size: 1.5em;
+  font-weight: 700;
+  color: #343a40;
+}
+
+.faculty .body {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-content: center;
+}
+
+.faculty .body .section {
+  width: 50%;
+}
+
+.faculty-register{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+
+  label {
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    align-items: center;
+    gap: 5px;
+    input {
+      width: 250px;
+      height: 30px;
+      border: 1px solid #051415;
+      border-radius: 5px;
+    }
+  }
+}

@@ -1,4 +1,5 @@
-pragma solidity ^0.8.0;
+// SPDX-License-Identifier: GPL-3.0
+pragma solidity >=0.7.0 <0.9.0;
 
 contract projectStaffContractIITM {
 
@@ -48,7 +49,7 @@ contract projectStaffContractIITM {
 
     Project[] private projects;
 
-    constructor() public {
+    constructor() {
         admin = payable(msg.sender);
      }
 
@@ -64,7 +65,7 @@ contract projectStaffContractIITM {
         string calldata _department,
         string calldata _email
       ) external returns (uint) {
-      if(facultyMap[msg.sender] != 0) {
+      if(facultyMap[msg.sender] != 0 || staffMap[msg.sender] != 0) {
         // Already registered
         return 4;
       }
@@ -90,7 +91,7 @@ contract projectStaffContractIITM {
         string calldata _name, 
         string calldata _email
       ) external returns (uint) {
-      if(facultyMap[msg.sender] != 0) {
+      if(facultyMap[msg.sender] != 0 || staffMap[msg.sender] != 0) {
         // Already registered
         return 4;
       }

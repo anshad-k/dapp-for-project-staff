@@ -20,7 +20,7 @@ async function isAdmin(walletData, accountId, contractId) {
 	const contractExecSubmit = await contractExecSign.executeWithSigner(signer);
 	const contractExecRx = await provider.getTransactionReceipt(contractExecSubmit.transactionId);
 
-  console.log(`- Faculty details: ${contractExecRx.returnValues[0]}`);
+  console.log(`- Is admin returns: ${contractExecRx.returnValues[0]}`);
 
 	return contractExecRx.returnValues[0] === 2;
 }
