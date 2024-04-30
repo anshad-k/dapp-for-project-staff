@@ -58,10 +58,10 @@ function App() {
 
 				<MyGroup
 					fcn = {() => {
-						if(!accountId) {
-							setlogTextSt("🔌 Connect wallet first... ⚡ ❌");
-							return;
-						}
+						// if(!accountId) {
+						// 	setlogTextSt("🔌 Connect wallet first... ⚡ ❌");
+						// 	return;
+						// }
 						setPage("staff");
 					}}
 					buttonLabel = {"Project Staff"}
@@ -69,10 +69,10 @@ function App() {
 
 				<MyGroup
 					fcn = {() => {
-						if(!accountId) {
-							setlogTextSt("🔌 Connect wallet first... ⚡ ❌");
-							return;
-						}
+						// if(!accountId) {
+						// 	setlogTextSt("🔌 Connect wallet first... ⚡ ❌");
+						// 	return;
+						// }
 						setPage("faculty");
 					}}
 					buttonLabel = {"IITM Faculty"}

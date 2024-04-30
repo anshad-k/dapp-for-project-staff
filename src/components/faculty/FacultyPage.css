@@ -41,18 +41,22 @@
 .faculty-register{
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 5px;
+  justify-content: space-between;
+  align-content: center;
+  gap: 15px;
 
   label {
     display: flex;
     flex-direction: row;
     justify-content: left;
     align-items: center;
-    gap: 5px;
+
+    div {
+      width: 40%;
+      text-align: center;
+    }
     input {
-      width: 250px;
+      width: 40%;
       height: 30px;
       border: 1px solid #051415;
       border-radius: 5px;

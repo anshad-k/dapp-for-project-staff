@@ -118,7 +118,7 @@ contract projectStaffContractIITM {
       uint256 _startDate,
       uint256 _endDate,
       uint _salary,
-      uint256[] calldata _facultyAddresses
+      address[] calldata _facultyAddresses
     ) external returns (uint) {
       if(staffMap[msg.sender] == 0 || _facultyAddresses.length == 0) {
         return 4;
@@ -139,13 +139,13 @@ contract projectStaffContractIITM {
       Project storage newProject = projects[projects.length - 1];
 
       for(uint i = 0; i < _facultyAddresses.length; i++) {
-        address payable facultyAddress = payable(uint256ToAddress(_facultyAddresses[i]));
+        address payable facultyAddress = payable(_facultyAddresses[i]);
         newProject.faculties.push(facultyAddress);
         faculties[facultyMap[facultyAddress] - 1].projectIds.push(projects.length);
       }
 
       projectStaffs[staffMap[msg.sender] - 1].projectIds.push(projects.length);
-      newProject.currentApprover = payable(uint256ToAddress(_facultyAddresses[0]));
+      newProject.currentApprover = payable(address(0));
       return 2;
     }
 
@@ -158,8 +158,11 @@ contract projectStaffContractIITM {
       if(project.status != ProjectStatus.PENDING && project.status != ProjectStatus.EXTENSION) {
         return 5;
       }
-      if(project.currentApprover != msg.sender) {
-        return 6;
+      for(uint i = 0; i < project.faculties.length; i++) {
+        if(project.faculties[i] == msg.sender) {
+          project.currentApprover = payable(msg.sender);
+          break;
+        }
       }
       if(_approval) {
         project.status = ProjectStatus.APPROVED;
@@ -210,6 +213,10 @@ contract projectStaffContractIITM {
 
     function getAllProjects() external view returns (Project[] memory) {
       return projects;
+    }
+
+    function getAllProjectStaffs() external view returns (ProjectStaff[] memory) {
+      return projectStaffs;
     }
 
     function addressToUint256(address _addr) private pure returns (uint256) {

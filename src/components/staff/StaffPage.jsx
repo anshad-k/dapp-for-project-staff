@@ -4,11 +4,17 @@ import getProjectDetailsFcn from '../hedera/getProjectDetails';
 import './StaffPage.css';
 import MyLog from '../MyLog';
 import getFacultyDetailsFcn from '../hedera/getFacultyDetails';
+import StaffRegister from './StaffRegister';
+import { isRegisteredFcn } from '../hedera/contractUtils';
+import ProjectAdd from './ProjectAdd';
+import SearchProjects from '../search/SearchProjects';
 
 const StaffPage = ({walletData, accountId, contractId, setPage}) => {
   const [logText, setLogText] = useState("Welcome project satff...");
   const [projects, setProjects] = useState([]);
   const [faculties, setFaculties] = useState([]);
+  const [search, setSearch] = useState(true);
+  const [isRegistered, setIsRegistered] = useState(true);
 
   const fetchData = async () => {
     if(!contractId) {
@@ -19,10 +25,28 @@ const StaffPage = ({walletData, accountId, contractId, setPage}) => {
     setFaculties((await getFacultyDetailsFcn(walletData, accountId, contractId)));
   };
 
+  const checkingRegitration = async () => {
+    if(!contractId) {
+      setLogText("No contracts deployed ...");
+      return;
+    }
+    console.log('Checking registration...');
+    // setIsRegistered(await isRegisteredFcn(walletData, accountId, contractId, false));
+    setIsRegistered(true);
+  }
+
   return (
     <div className='staff'>
       <nav className='navbar'>
         <h1>Faculty Page</h1>
+        <MyGroup 
+          fcn={() => setSearch(false)}
+          buttonLabel={`Add Project`}  
+        />
+        <MyGroup 
+          fcn={() => setSearch(true)}
+          buttonLabel={`Search Project`}  
+        />
         <MyGroup 
           fcn={fetchData}
           buttonLabel={"Fetch Data"}  
@@ -34,7 +58,7 @@ const StaffPage = ({walletData, accountId, contractId, setPage}) => {
       </nav>
       <MyLog message={logText} />
       <div className='body'>
-        <div className='section'>
+        {isRegistered ? <div className='section'>
           <h2>Your Projects</h2>
           <ul>
             {projects
@@ -43,10 +67,31 @@ const StaffPage = ({walletData, accountId, contractId, setPage}) => {
             ))}
           </ul>
         </div>
+        : <div className='section'>
+            <StaffRegister 
+              walletData={walletData}
+              accountId={accountId} 
+              contractId={contractId} 
+              setIsRegistered={setIsRegistered} 
+              setLogText={setLogText} 
+            />
+          </div>
+        }
         
-        <div className='section'>
+        {search ? <div className='section' style={{visibility: isRegistered ? 'visible' : 'hidden'}}>
           <h2>Search Projects</h2>
+          <SearchProjects projects={projects} />
         </div>
+        :
+        <div className='section' style={{visibility: isRegistered ? 'visible' : 'hidden'}}>
+          <ProjectAdd 
+            walletData={walletData} 
+            accountId={accountId} 
+            contractId={contractId} 
+            setLogText={setLogText} 
+          />
+        </div>
+        }
       </div>
     </div>
   );

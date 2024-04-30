@@ -302,6 +302,14 @@ code {
 	padding-bottom: 30px;
 }
 
+.css-wb57ya-MuiFormControl-root-MuiTextField-root {
+  width: 253% !important;
+}
+
+.css-154xyx0-MuiInputBase-root-MuiOutlinedInput-root {
+  background-color: white !important;
+}
+
 .hedera-logo {
 	width: 428px;
 	height: 138px;

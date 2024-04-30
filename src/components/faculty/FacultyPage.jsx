@@ -5,10 +5,13 @@ import './FacultyPage.css';
 import MyLog from '../MyLog';
 import { ProjectStatus } from '../../utils';
 import FacultyRegister from './FacultyRegister';
+import { isRegisteredFcn } from '../hedera/contractUtils';
+import SearchProjects from '../search/SearchProjects';
 
 const FacultyPage = ({walletData, accountId, contractId, setPage}) => {
   const [logText, setLogText] = useState("Welcome IITM Faculty...");
   const [projects, setProjects] = useState([]);
+  const [isRegistered, setIsRegistered] = useState(false);
 
   const fetchData = async () => {
     if(!contractId) {
@@ -17,6 +20,15 @@ const FacultyPage = ({walletData, accountId, contractId, setPage}) => {
     }
     setProjects((await getProjectDetailsFcn(walletData, accountId, contractId)));
   };
+
+  const checkingRegitration = async () => {
+    if(!contractId) {
+      setLogText("No contracts deployed ...");
+      return;
+    }
+    console.log('Checking registration...');
+    setIsRegistered(await isRegisteredFcn(walletData, accountId, contractId, true));
+  }
 
   return (
     <div className='faculty'>
@@ -33,7 +45,7 @@ const FacultyPage = ({walletData, accountId, contractId, setPage}) => {
       </nav>
       <MyLog message={logText} />
       <div className='body'>
-        <div className='section'>
+        {isRegistered ? <div className='section'>
           <h2>Pending Projects</h2>
           <ul>
             {projects
@@ -52,10 +64,22 @@ const FacultyPage = ({walletData, accountId, contractId, setPage}) => {
             ))}
           </ul>
         </div>
-        
+        : 
         <div className='section'>
+          <h2>Register Faculty</h2>
+          <FacultyRegister 
+            walletData={walletData} 
+            accountId={accountId} 
+            contractId={contractId} 
+            setIsRegistered={setIsRegistered} 
+            setLogText={setLogText} 
+          />
+        </div>
+        }
+        
+        <div className='section' style={{visibility: isRegistered ? 'visible' : 'hidden'}}>
           <h2>Search Projects</h2>
-          <FacultyRegister walletData={walletData} accountId={accountId} contractId={contractId} />
+          <SearchProjects projects={projects} />
         </div>
       </div>
     </div>
