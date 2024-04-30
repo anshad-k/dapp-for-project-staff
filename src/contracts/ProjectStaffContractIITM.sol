@@ -8,7 +8,7 @@ contract projectStaffContractIITM {
         APPROVED, 
         REJECTED, 
         COMPLETED,
-        EXTENSION
+        EXTEND
     }
 
     struct Faculty {
@@ -24,8 +24,8 @@ contract projectStaffContractIITM {
         string title;
         string description;
         ProjectStatus status;
-        uint256 startDate;
-        uint256 endDate;
+        uint32 startDate;
+        uint32 endDate;
         uint salary;
         address payable projectStaffAddress;
         address payable[] faculties;
@@ -115,13 +115,24 @@ contract projectStaffContractIITM {
     function addProject(
       string calldata _title,
       string calldata _description,
-      uint256 _startDate,
-      uint256 _endDate,
+      uint32 _startDate,
+      uint32 _endDate,
       uint _salary,
       address[] calldata _facultyAddresses
     ) external returns (uint) {
-      if(staffMap[msg.sender] == 0 || _facultyAddresses.length == 0) {
+      if(staffMap[msg.sender] == 0 || _facultyAddresses.length <= 1) {
         return 4;
+      }
+      if(_facultyAddresses.length <= 1 || _facultyAddresses.length > 4) {
+        return 5;
+      }
+      for(uint i = 0; i < _facultyAddresses.length; i++) {
+        if(facultyMap[_facultyAddresses[i]] == 0) {
+          return 6;
+        }
+      }
+      if(_startDate >= _endDate) {
+        return 7;
       }
       projects.push(Project({
         id: projects.length + 1, // 1-indexed
@@ -155,7 +166,7 @@ contract projectStaffContractIITM {
         return 4;
       }
       Project storage project = projects[_projectId - 1];
-      if(project.status != ProjectStatus.PENDING && project.status != ProjectStatus.EXTENSION) {
+      if(project.status != ProjectStatus.PENDING && project.status != ProjectStatus.EXTEND) {
         return 5;
       }
       for(uint i = 0; i < project.faculties.length; i++) {
@@ -172,9 +183,9 @@ contract projectStaffContractIITM {
       return 2;
     }
 
-    function getExtension(
+    function getExtendedPeriod(
         uint _projectId, 
-        uint256 _newEndDate
+        uint32 _newEndDate
       ) external returns (uint) {
       if(staffMap[msg.sender] == 0 || _projectId > projects.length) {
         return 4;
@@ -183,7 +194,7 @@ contract projectStaffContractIITM {
       if(project.status != ProjectStatus.APPROVED) {
         return 5;
       }
-      project.status = ProjectStatus.EXTENSION;
+      project.status = ProjectStatus.EXTEND;
       project.endDate = _newEndDate;
       return 2;
     }
