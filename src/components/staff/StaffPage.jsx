@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import MyGroup from '../MyGroup';
 import getProjectDetailsFcn from '../hedera/getProjectDetails';
 import './StaffPage.css';
@@ -14,7 +14,7 @@ const StaffPage = ({walletData, accountId, contractId, setPage}) => {
   const [projects, setProjects] = useState([]);
   const [faculties, setFaculties] = useState([]);
   const [search, setSearch] = useState(true);
-  const [isRegistered, setIsRegistered] = useState(true);
+  const [isRegistered, setIsRegistered] = useState(false);
 
   const fetchData = async () => {
     if(!contractId) {
@@ -25,15 +25,19 @@ const StaffPage = ({walletData, accountId, contractId, setPage}) => {
     setFaculties((await getFacultyDetailsFcn(walletData, accountId, contractId)));
   };
 
-  const checkingRegitration = async () => {
-    if(!contractId) {
-      setLogText("No contracts deployed ...");
-      return;
+  
+  useEffect(() => {
+    const checkingRegitration = async () => {
+      if(!contractId) {
+        setLogText("No contracts deployed ...");
+        return;
+      }
+      console.log('Checking registration...');
+      setIsRegistered(await isRegisteredFcn(walletData, accountId, contractId, false));
+      // setIsRegistered(true);
     }
-    console.log('Checking registration...');
-    // setIsRegistered(await isRegisteredFcn(walletData, accountId, contractId, false));
-    setIsRegistered(true);
-  }
+    checkingRegitration();
+  }, []);
 
   return (
     <div className='staff'>

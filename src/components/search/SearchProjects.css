@@ -4,4 +4,16 @@
   justify-content: space-between;
   align-content: center;
   gap: 15px;
+  label {
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    align-items: center;
+
+    div {
+      width: 40%;
+      text-align: center;
+    }
+  }
 }
+

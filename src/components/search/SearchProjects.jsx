@@ -9,6 +9,7 @@ const SearchProjects = ({projects}) => {
   return (
     <div className='search'>
       <label>
+        <div>Project Title</div>
         <Autocomplete
           disablePortal
           id="combo-box-demo"

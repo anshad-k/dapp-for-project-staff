@@ -1,4 +1,4 @@
-import { ContractFunctionParameters, ContractExecuteTransaction } from "@hashgraph/sdk";
+import { ContractFunctionParameters, ContractExecuteTransaction, ContractId } from "@hashgraph/sdk";
 
 async function makePayments(walletData, accountId, contractId) {
 	console.log(`\n=======================================`);
@@ -11,9 +11,9 @@ async function makePayments(walletData, accountId, contractId) {
 
 	//Execute a contract function (transfer)
 	const contractExecTx = await new ContractExecuteTransaction()
-		.setContractId(contractId)
+		.setContractId(ContractId.fromString(contractId))
 		.setGas(3000000)
-		.setFunction("makePayments", new ContractFunctionParameters())
+		.setFunction("makePayments")
 		.freezeWithSigner(signer);
 
 	const contractExecSign = await contractExecTx.signWithSigner(signer);

@@ -1,4 +1,4 @@
-import { ContractFunctionParameters, ContractExecuteTransaction } from "@hashgraph/sdk";
+import { ContractFunctionParameters, ContractExecuteTransaction, ContractId, AccountId } from "@hashgraph/sdk";
 
 async function isAdmin(walletData, accountId, contractId) {
 	console.log(`\n=======================================`);
@@ -11,14 +11,14 @@ async function isAdmin(walletData, accountId, contractId) {
 
 	//Execute a contract function (transfer)
 	const contractExecTx = await new ContractExecuteTransaction()
-		.setContractId(contractId)
+		.setContractId(ContractId.fromString(contractId))
 		.setGas(3000000)
-		.setFunction("loginAdmin", new ContractFunctionParameters())
+		.setFunction("loginAdmin")
 		.freezeWithSigner(signer);
 
 	const contractExecSign = await contractExecTx.signWithSigner(signer);
 	const contractExecSubmit = await contractExecSign.executeWithSigner(signer);
-	const contractExecRx = await provider.getTransactionReceipt(contractExecSubmit.transactionId);
+	const contractExecRx = await contractExecSubmit.getReceiptWithSigner(signer);
 
   console.log(`- Is admin returns: ${contractExecRx.returnValues[0]}`);
 
@@ -26,7 +26,6 @@ async function isAdmin(walletData, accountId, contractId) {
 }
 
 async function isRegisteredFcn(walletData, accountId, contractId, isFaculty) {
-	return false;
 	console.log(`\n=======================================`);
 	console.log(`- Checking if registeres in the contract...`);
 
@@ -39,14 +38,16 @@ async function isRegisteredFcn(walletData, accountId, contractId, isFaculty) {
 
 	//Execute a contract function (transfer)
 	const contractExecTx = await new ContractExecuteTransaction()
-		.setContractId(contractId)
-		.setGas(3000000)
-		.setFunction(functionCall, new ContractFunctionParameters())
+		.setContractId(ContractId.fromString(contractId))
+		.setGas(100000)
+		.setFunction(functionCall)
 		.freezeWithSigner(signer);
 
 	const contractExecSign = await contractExecTx.signWithSigner(signer);
 	const contractExecSubmit = await contractExecSign.executeWithSigner(signer);
-	const contractExecRx = await provider.getTransactionReceipt(contractExecSubmit.transactionId);
+	const contractExecRx = await contractExecSubmit.getReceipt(signer.getAccountId());
+
+	console.log(`receipt: ${contractExecRx}`)
 
   console.log(`- Is admin returns: ${contractExecRx.returnValues[0]}`);
 
@@ -64,14 +65,16 @@ async function registerFacultyFcn(walletData, accountId, contractId, name, depar
 
 	//Execute a contract function (transfer)
 	const contractExecTx = await new ContractExecuteTransaction()
-		.setContractId(contractId)
+		.setContractId(ContractId.fromString(contractId))
 		.setGas(3000000)
 		.setFunction("registerFaculty", new ContractFunctionParameters().addString(name).addString(department).addString(email))
 		.freezeWithSigner(signer);
 
 	const contractExecSign = await contractExecTx.signWithSigner(signer);
 	const contractExecSubmit = await contractExecSign.executeWithSigner(signer);
-	const contractExecRx = await provider.getTransactionReceipt(contractExecSubmit.transactionId);
+	const contractExecRx = await contractExecSubmit.getReceiptWithSigner(signer);
+
+	console.log(`receipt: ${contractExecRx}`);
 
 	console.log(`- Is admin returns: ${contractExecRx.returnValues[0]}`);
 
@@ -89,14 +92,14 @@ async function registerStaffFcn(walletData, accountId, contractId, name, email) 
 
 	//Execute a contract function (transfer)
 	const contractExecTx = await new ContractExecuteTransaction()
-		.setContractId(contractId)
+		.setContractId(ContractId.fromString(contractId))
 		.setGas(3000000)
 		.setFunction("registerProjectStaff", new ContractFunctionParameters().addString(name).addString(email))
 		.freezeWithSigner(signer);
 
 	const contractExecSign = await contractExecTx.signWithSigner(signer);
 	const contractExecSubmit = await contractExecSign.executeWithSigner(signer);
-	const contractExecRx = await provider.getTransactionReceipt(contractExecSubmit.transactionId);
+	const contractExecRx = await contractExecSubmit.getReceiptWithSigner(signer);
 
 	console.log(`- Is admin returns: ${contractExecRx.returnValues[0]}`);
 

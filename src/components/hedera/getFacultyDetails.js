@@ -1,4 +1,4 @@
-import { ContractFunctionParameters, ContractExecuteTransaction } from "@hashgraph/sdk";
+import { ContractFunctionParameters, ContractExecuteTransaction, ContractId } from "@hashgraph/sdk";
 
 async function getFacultyDetailsFcn(walletData, accountId, contractId) {
 	console.log(`\n=======================================`);
@@ -11,9 +11,9 @@ async function getFacultyDetailsFcn(walletData, accountId, contractId) {
 
 	//Execute a contract function (transfer)
 	const contractExecTx = await new ContractExecuteTransaction()
-		.setContractId(contractId)
+		.setContractId(ContractId.fromString(contractId))
 		.setGas(300000000)
-		.setFunction("getAllFaculties", new ContractFunctionParameters())
+		.setFunction("getAllFaculties")
 		.freezeWithSigner(signer);
 
 	const contractExecSign = await contractExecTx.signWithSigner(signer);

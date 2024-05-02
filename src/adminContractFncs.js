@@ -3,7 +3,10 @@ import {
 	Client,
 	ContractCreateFlow,
 	Hbar,
-	ContractDeleteTransaction
+	ContractDeleteTransaction,
+	ContractId,
+	PrivateKey,
+	AccountId
 } from "@hashgraph/sdk";
 
 
@@ -44,11 +47,11 @@ async function adminContractDeploy() {
 	return [cId, contractCreateResp.transactionId];
 }
 
-async function adminContractDelete(contractId) {
+async function adminContractDelete(contract_id) {
 	console.log(`\n=======================================`);
-	console.log(`- Deleting the smart contract ${contractId}...`);
+	console.log(`- Deleting the smart contract ${contract_id}...`);
 
-	if(!contractId) {
+	if(!contract_id) {
 		console.log(`- Contract ID is required to delete the contract`);
 		return;
 	}
@@ -57,10 +60,11 @@ async function adminContractDelete(contractId) {
 	const client = getAdminClient();
 
 	const transaction = new ContractDeleteTransaction()
-		.setContractId(contractId)
+		.setContractId(ContractId.fromString(contract_id))
+		.setTransferAccountId(AccountId.fromString(myAccountId))
 		.freezeWith(client);
 
-	const contractDeleteSign = await transaction.sign(myPrivateKey);
+	const contractDeleteSign = await transaction.sign(PrivateKey.fromString(myPrivateKey));
 
 	const contractDeleteResp = await contractDeleteSign.execute(client);
 	const contractDeleteRx = await contractDeleteResp.getReceipt(client);

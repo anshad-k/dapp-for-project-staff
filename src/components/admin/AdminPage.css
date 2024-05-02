@@ -1,4 +1,4 @@
-.staff {
+.admin {
   width: 100%;
 	min-height: 800px;
 	text-align: center;
@@ -6,7 +6,7 @@
   background-color: #1366cb;
 }
 
-.staff .navbar {
+.admin .navbar {
   background-color: #07acb8;
   width: 90%;
   height: 55px;
@@ -17,7 +17,7 @@
   padding: 20px 5%;
 }
 
-.staff .navbar h1{
+.admin .navbar h1{
   margin: 0;
   padding: 0;
   line-height: 50px;
@@ -26,7 +26,7 @@
   color: #343a40;
 }
 
-.staff .body {
+.admin .body {
   width: 100%;
   display: flex;
   flex-direction: row;
@@ -34,6 +34,6 @@
   align-content: center;
 }
 
-.staff .body .section {
+.admin .body .section {
   width: 50%;
 }

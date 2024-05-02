@@ -1,9 +1,10 @@
-import {bytecode} from "./contractData.js";
+// import {bytecode} from "./contractData.js";
 import {
 	FileCreateTransaction,
 	ContractCreateTransaction,
 	ContractFunctionParameters,
 } from "@hashgraph/sdk";
+const contractABI = require("../../contracts/contractABI.json")
 
 async function contractDeployFcn(walletData, accountId) {
 	console.log(`\n=======================================`);
@@ -14,7 +15,8 @@ async function contractDeployFcn(walletData, accountId) {
 	const provider = hashconnect.getProvider("testnet", saveData.topic, accountId);
 	const signer = hashconnect.getSigner(provider);
 
-	//Create a file on Hedera and store the hex-encoded bytecode
+	const bytecode = contractABI.data.bytecode.object;
+
 	// const fileCreateTx = await new FileCreateTransaction()
 	// 	.setContents(bytecode)
 	// 	.freezeWithSigner(signer);
@@ -23,21 +25,17 @@ async function contractDeployFcn(walletData, accountId) {
 	// const bytecodeFileId = fileCreateRx.fileId;
 	// console.log(`- The smart contract bytecode file ID is: ${bytecodeFileId}`);
 
-	// Create the smart contract
 	// const contractCreateTx = await new ContractCreateTransaction()
 	// 	.setBytecodeFileId(bytecodeFileId)
 	// 	.setGas(3000000)
 	// 	.setConstructorParameters(
-	// 		new ContractFunctionParameters().addAddress(NaN)
+	// 		new ContractFunctionParameters()
 	// 	)
 	// 	.freezeWithSigner(signer);
 
 	const contractCreateTx = await new ContractCreateTransaction()
-		.setBytecode(bytecode, bytecode.length / 2)
 		.setGas(3000000)
-		.setConstructorParameters(
-			new ContractFunctionParameters()
-		)
+		.setBytecode(bytecode)
 		.freezeWithSigner(signer)
 
 	const contractCreateSign = await contractCreateTx.signWithSigner(signer);

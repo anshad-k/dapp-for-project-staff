@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import MyGroup from '../MyGroup';
 import contractDeployFcn from '../hedera/contractDeploy';
 import getFacultyDetailsFcn from '../hedera/getFacultyDetails';
@@ -8,7 +8,6 @@ import makePayments from '../hedera/makePayments';
 import MyLog from '../MyLog';
 import { isAdmin } from '../hedera/contractUtils';
 import {adminContractDeploy, adminContractDelete} from '../../adminContractFncs';
-import contractDeleteFcn from '../hedera/contractDelete';
 
 const AdminPage = ({walletData, accountId, setPage}) => {
   const [contractId, setContractId] = useState();
@@ -25,11 +24,12 @@ const AdminPage = ({walletData, accountId, setPage}) => {
       setPage("home");
     }
      else {
-			const [cId, txIdRaw] = await contractDeployFcn(walletData, accountId);
-      // const [cId, txIdRaw] = await adminContractDeploy();
+      setLogText("Deploying contract ...");
+      const [cId, txIdRaw] = await adminContractDeploy();
 
 			setContractId(cId);
 			setLogText(`Successfully deployed smart contract with ID: ${cId} ✅`);
+      localStorage.setItem("contractId", cId);
 		}
 	}
 
@@ -43,6 +43,7 @@ const AdminPage = ({walletData, accountId, setPage}) => {
     }
     setFaculties((await getFacultyDetailsFcn(walletData, accountId, contractId)));
     setProjects((await getProjectDetailsFcn(walletData, accountId, contractId)));
+
   };
 
   const completePayment = async () => {
@@ -53,6 +54,15 @@ const AdminPage = ({walletData, accountId, setPage}) => {
     if(makePayments(walletData, accountId, contractId) !== 2) {
       setLogText("Payments failed ...");
     }
+  }
+
+  const contractDelete = async () => {
+    if(!contractId) {
+      setLogText("No contracts deployed ...");
+      return;
+    }
+    await adminContractDelete(contractId);
+    setContractId(undefined);
   }
 
   return (
@@ -72,11 +82,7 @@ const AdminPage = ({walletData, accountId, setPage}) => {
           buttonLabel={`Initiate Payments`}  
         />
         <MyGroup 
-          fcn={() =>{
-            if(contractId) {
-              contractDeleteFcn(walletData, accountId, contractId);
-            }
-          }}
+          fcn={contractDelete}
           buttonLabel={"Delete Contract"} 
         />
         <MyGroup 

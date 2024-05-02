@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import MyGroup from "./components/MyGroup.jsx";
 import walletConnectFcn from "./components/hedera/walletConnect.js";
 import AdminPage from "./components/admin/AdminPage.jsx";
@@ -7,6 +7,7 @@ import MyLog from "./components/MyLog.jsx";
 import { isAdmin } from "./components/hedera/contractUtils.js";
 import StaffPage from "./components/staff/StaffPage.jsx";
 import FacultyPage from "./components/faculty/FacultyPage.jsx";
+import { CONTRACT_ID } from "./contracts/contractId.js";
 
 function App() {
 	const [walletData, setWalletData] = useState();
@@ -33,7 +34,23 @@ function App() {
 			setWalletData(wData);
 		}
 	}
-	console.log('page:', page);
+
+	function changePage(newPage) {
+		if(!accountId) {
+				setlogTextSt("🔌 Connect wallet first... ⚡ ❌");
+				return;
+			}
+		if(!contractId) {
+			if(CONTRACT_ID.length > 0) {
+				setContractId(CONTRACT_ID);
+			} else {
+				setlogTextSt("🔌 No contract deployed... ⚡ ❌");
+				return;
+			}
+		}
+		setPage(newPage);
+	}
+
 	if(page === 'home') {
 	return (
 			<div className="App">
@@ -47,33 +64,21 @@ function App() {
 
 				<MyGroup
 					fcn = {() => {
-						if(!accountId) {
-							setlogTextSt("🔌 Connect wallet first... ⚡ ❌");
-							return;
-						}
-						setPage("admin");
+						changePage("admin");
 					}}
 					buttonLabel = {"Contract Admin"}
 				/>
 
 				<MyGroup
 					fcn = {() => {
-						// if(!accountId) {
-						// 	setlogTextSt("🔌 Connect wallet first... ⚡ ❌");
-						// 	return;
-						// }
-						setPage("staff");
+						changePage("staff");
 					}}
 					buttonLabel = {"Project Staff"}
 				/>
 
 				<MyGroup
 					fcn = {() => {
-						// if(!accountId) {
-						// 	setlogTextSt("🔌 Connect wallet first... ⚡ ❌");
-						// 	return;
-						// }
-						setPage("faculty");
+						changePage("faculty");
 					}}
 					buttonLabel = {"IITM Faculty"}
 				/>

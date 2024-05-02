@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity >=0.7.0 <0.9.0;
+pragma solidity >=0.8.9 <0.9.0;
 
 contract projectStaffContractIITM {
 
@@ -53,7 +53,7 @@ contract projectStaffContractIITM {
         admin = payable(msg.sender);
      }
 
-    function loginAdmin() external view returns (uint) {
+    function loginAdmin() external view returns (uint8) {
       if(admin != msg.sender) {
         return 4;
       }
@@ -64,7 +64,7 @@ contract projectStaffContractIITM {
         string calldata _name, 
         string calldata _department,
         string calldata _email
-      ) external returns (uint) {
+      ) external returns (uint8) {
       if(facultyMap[msg.sender] != 0 || staffMap[msg.sender] != 0) {
         // Already registered
         return 4;
@@ -80,7 +80,7 @@ contract projectStaffContractIITM {
       return 2;
     }
 
-    function loginFaculty() external view returns (uint) {
+    function loginFaculty() external view returns (uint8) {
       if(facultyMap[msg.sender] == 0) {
         return 4;
       }
@@ -90,7 +90,7 @@ contract projectStaffContractIITM {
     function registerProjectStaff(
         string calldata _name, 
         string calldata _email
-      ) external returns (uint) {
+      ) external returns (uint8) {
       if(facultyMap[msg.sender] != 0 || staffMap[msg.sender] != 0) {
         // Already registered
         return 4;
@@ -105,7 +105,7 @@ contract projectStaffContractIITM {
       return 2;
     }
 
-    function loginProjectStaff() external view returns (uint) {
+    function loginProjectStaff() external view returns (uint8) {
       if(staffMap[msg.sender] == 0) {
         return 4;
       }
@@ -119,7 +119,7 @@ contract projectStaffContractIITM {
       uint32 _endDate,
       uint _salary,
       address[] calldata _facultyAddresses
-    ) external returns (uint) {
+    ) external returns (uint8) {
       if(staffMap[msg.sender] == 0 || _facultyAddresses.length <= 1) {
         return 4;
       }
@@ -161,7 +161,7 @@ contract projectStaffContractIITM {
     }
 
 
-    function approveProject(uint _projectId, bool _approval) external returns (uint) {
+    function approveProject(uint _projectId, bool _approval) external returns (uint8) {
       if(facultyMap[msg.sender] == 0 || _projectId > projects.length) {
         return 4;
       }
@@ -186,7 +186,7 @@ contract projectStaffContractIITM {
     function getExtendedPeriod(
         uint _projectId, 
         uint32 _newEndDate
-      ) external returns (uint) {
+      ) external returns (uint8) {
       if(staffMap[msg.sender] == 0 || _projectId > projects.length) {
         return 4;
       }
@@ -199,7 +199,7 @@ contract projectStaffContractIITM {
       return 2;
     }
 
-    function makePayments() external returns (uint) {
+    function makePayments() external returns (uint8) {
       if(admin != msg.sender) { // caller should be admin
         return 4;
       }
@@ -228,14 +228,5 @@ contract projectStaffContractIITM {
 
     function getAllProjectStaffs() external view returns (ProjectStaff[] memory) {
       return projectStaffs;
-    }
-
-    function addressToUint256(address _addr) private pure returns (uint256) {
-        uint160 _uint = uint160(_addr);
-        return uint256(_uint);
-    }
-
-    function uint256ToAddress(uint256 _uint) private pure returns (address) {
-        return address(uint160(_uint));
     }
 }
