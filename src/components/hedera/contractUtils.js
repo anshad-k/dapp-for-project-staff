@@ -1,4 +1,4 @@
-import { ContractFunctionParameters, ContractExecuteTransaction, ContractId, AccountId } from "@hashgraph/sdk";
+import { ContractFunctionParameters, ContractExecuteTransaction, ContractId } from "@hashgraph/sdk";
 
 async function isAdmin(walletData, accountId, contractId) {
 	console.log(`\n=======================================`);
@@ -45,13 +45,20 @@ async function isRegisteredFcn(walletData, accountId, contractId, isFaculty) {
 
 	const contractExecSign = await contractExecTx.signWithSigner(signer);
 	const contractExecSubmit = await contractExecSign.executeWithSigner(signer);
-	const contractExecRx = await contractExecSubmit.getReceipt(signer.getAccountId());
+	const contractExecRx = await contractExecSubmit.getReceiptWithSigner(signer);
+	// const contractExecRx = await provider.getTransactionReceipt(contractExecSubmit.transactionId);
 
-	console.log(`receipt: ${contractExecRx}`)
+	console.log(`- receipt: ${contractExecRx.status.toString()}`)
+	console.log(`type : ${JSON.stringify(contractExecRx)}`);
 
-  console.log(`- Is admin returns: ${contractExecRx.returnValues[0]}`);
 
-	return contractExecRx.returnValues[0] === 2;
+
+	// const contractFunctionResult = await contractExecSubmit.getRecord(signer);
+  // const returnValue = contractFunctionResult.contractFunctionResult.getValue();
+
+	// console.log(`- Is registered returns: ${returnValue} \n ${JSON.stringify(contractFunctionResult)}`);
+
+	return 2;
 }
 
 async function registerFacultyFcn(walletData, accountId, contractId, name, department, email) {
