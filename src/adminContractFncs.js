@@ -16,7 +16,7 @@ function getAdmin() {
 	return [myAccountId, myPrivateKey];
 }
 
-function getAdminClient() {
+export function getAdminClient() {
 	const [myAccountId, myPrivateKey] = getAdmin();
 	const client = Client.forTestnet();
 	client.setOperator(myAccountId, myPrivateKey);

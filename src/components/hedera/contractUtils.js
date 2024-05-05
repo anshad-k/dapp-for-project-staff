@@ -1,4 +1,5 @@
-import { ContractFunctionParameters, ContractExecuteTransaction, ContractId } from "@hashgraph/sdk";
+import { ContractFunctionParameters, ContractExecuteTransaction, ContractId, ContractCallQuery } from "@hashgraph/sdk";
+import { getAdminClient } from "../../adminContractFncs";
 
 async function isAdmin(walletData, accountId, contractId) {
 	console.log(`\n=======================================`);
@@ -36,29 +37,28 @@ async function isRegisteredFcn(walletData, accountId, contractId, isFaculty) {
 	const provider = hashconnect.getProvider("testnet", saveData.topic, accountId);
 	const signer = hashconnect.getSigner(provider);
 
-	//Execute a contract function (transfer)
-	const contractExecTx = await new ContractExecuteTransaction()
+	// const contractExecTx = await new ContractCallQuery()
+	// 	.setContractId(ContractId.fromString(contractId))
+	// 	.setGas(100000)
+	// 	.setFunction(functionCall);
+
+	// const contractExecSubmit = await contractExecTx.executeWithSigner(signer);
+	// console.log(`Result : ${JSON.stringify(contractExecSubmit)}`);
+	// console.log(contractExecSubmit.bytes);
+
+	const client = getAdminClient();
+	const contractExecTx = await new ContractCallQuery()
 		.setContractId(ContractId.fromString(contractId))
 		.setGas(100000)
-		.setFunction(functionCall)
-		.freezeWithSigner(signer);
+		.setFunction(functionCall);
 
-	const contractExecSign = await contractExecTx.signWithSigner(signer);
-	const contractExecSubmit = await contractExecSign.executeWithSigner(signer);
-	const contractExecRx = await contractExecSubmit.getReceiptWithSigner(signer);
-	// const contractExecRx = await provider.getTransactionReceipt(contractExecSubmit.transactionId);
+	const contractExecSubmit = await contractExecTx.execute(client);
 
-	console.log(`- receipt: ${contractExecRx.status.toString()}`)
-	console.log(`type : ${JSON.stringify(contractExecRx)}`);
+	const result = Number(Object.values(contractExecSubmit.bytes).join(''));
 
+  console.log("Result", result);
 
-
-	// const contractFunctionResult = await contractExecSubmit.getRecord(signer);
-  // const returnValue = contractFunctionResult.contractFunctionResult.getValue();
-
-	// console.log(`- Is registered returns: ${returnValue} \n ${JSON.stringify(contractFunctionResult)}`);
-
-	return 2;
+	return result === 2;
 }
 
 async function registerFacultyFcn(walletData, accountId, contractId, name, department, email) {
