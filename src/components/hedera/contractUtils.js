@@ -1,4 +1,10 @@
-import { ContractFunctionParameters, ContractExecuteTransaction, ContractId, ContractCallQuery } from "@hashgraph/sdk";
+import { 
+	ContractFunctionParameters,
+	ContractExecuteTransaction, 
+	ContractId,
+	ContractCallQuery,
+	Address
+} from "@hashgraph/sdk";
 import { fetchTransactionRecord } from "../../utils";
 
 
@@ -48,7 +54,6 @@ async function isRegisteredFcn(walletData, accountId, contractId, isFaculty) {
 	const contractExecSubmit = await contractExecSign.executeWithSigner(signer);
 
 	const result = await fetchTransactionRecord(contractExecSubmit.transactionId);
-	console.log(`- Result: ${JSON.parse(result)}`);
 	const returnValue = Number(result.actions[0].result_data);
 	console.log(`- Is registered returns: ${returnValue}`);
 	return returnValue === 2;
