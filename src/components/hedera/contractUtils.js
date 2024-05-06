@@ -1,5 +1,6 @@
 import { ContractFunctionParameters, ContractExecuteTransaction, ContractId, ContractCallQuery } from "@hashgraph/sdk";
-import { getAdminClient } from "../../adminContractFncs";
+import { fetchTransactionRecord } from "../../utils";
+
 
 async function isAdmin(walletData, accountId, contractId) {
 	console.log(`\n=======================================`);
@@ -37,28 +38,20 @@ async function isRegisteredFcn(walletData, accountId, contractId, isFaculty) {
 	const provider = hashconnect.getProvider("testnet", saveData.topic, accountId);
 	const signer = hashconnect.getSigner(provider);
 
-	// const contractExecTx = await new ContractCallQuery()
-	// 	.setContractId(ContractId.fromString(contractId))
-	// 	.setGas(100000)
-	// 	.setFunction(functionCall);
-
-	// const contractExecSubmit = await contractExecTx.executeWithSigner(signer);
-	// console.log(`Result : ${JSON.stringify(contractExecSubmit)}`);
-	// console.log(contractExecSubmit.bytes);
-
-	const client = getAdminClient();
-	const contractExecTx = await new ContractCallQuery()
+	const contractExecTx = await new ContractExecuteTransaction()
 		.setContractId(ContractId.fromString(contractId))
 		.setGas(100000)
-		.setFunction(functionCall);
+		.setFunction(functionCall)
+		.freezeWithSigner(signer);
 
-	const contractExecSubmit = await contractExecTx.execute(client);
+	const contractExecSign = await contractExecTx.signWithSigner(signer);
+	const contractExecSubmit = await contractExecSign.executeWithSigner(signer);
 
-	const result = Number(Object.values(contractExecSubmit.bytes).join(''));
-
-  console.log("Result", result);
-
-	return result === 2;
+	const result = await fetchTransactionRecord(contractExecSubmit.transactionId);
+	console.log(`- Result: ${JSON.parse(result)}`);
+	const returnValue = Number(result.actions[0].result_data);
+	console.log(`- Is registered returns: ${returnValue}`);
+	return returnValue === 2;
 }
 
 async function registerFacultyFcn(walletData, accountId, contractId, name, department, email) {
