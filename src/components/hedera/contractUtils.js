@@ -81,3 +81,92 @@ export async function registerStaffFcn(walletData, accountId, contractId, name, 
 
 	return returnValue[0] === 2;
 }
+
+export async function addProject(walletData, accountId, contractId, project) {
+	console.log(`\n=======================================`);
+	console.log(`- Adding a project in the contract...`);
+
+	const signer = getSigner(walletData, accountId);
+
+	//Execute a contract function (transfer)
+	const contractExecTx = await new ContractExecuteTransaction()
+		.setContractId(ContractId.fromString(contractId))
+		.setGas(3000000)
+		.setFunction("addProject", 
+			new ContractFunctionParameters()
+				.addString(project.title)
+				.addString(project.description)
+				.addUint64(project.startDate)
+				.addUint64(project.endDate)
+				.addUint32(project.salary)
+				.addUint16Array(project.staffIds)
+				.addUint16Array(project.facultyIds)
+		)
+		.freezeWithSigner(signer);
+
+	const contractExecSign = await contractExecTx.signWithSigner(signer);
+	const contractExecSubmit = await contractExecSign.executeWithSigner(signer);
+	
+	const result = await fetchTransactionRecord(contractExecSubmit.transactionId);
+
+	console.log(`Result:\n ${JSON.stringify(result)}`);
+	const returnValue = Number(result.actions[0].result_data);
+
+	return returnValue[0] === 2;
+}
+
+export async function extendProject(walletData, accountId, contractId, projectId, endDate) {
+	console.log(`\n=======================================`);
+	console.log(`- Extending a project in the contract...`);
+
+	const signer = getSigner(walletData, accountId);
+
+	//Execute a contract function (transfer)
+	const contractExecTx = await new ContractExecuteTransaction()
+		.setContractId(ContractId.fromString(contractId))
+		.setGas(3000000)
+		.setFunction("getExtendedPeriod", 
+			new ContractFunctionParameters()
+				.addUint16(projectId)
+				.addUint64(endDate)
+		)
+		.freezeWithSigner(signer);
+
+	const contractExecSign = await contractExecTx.signWithSigner(signer);
+	const contractExecSubmit = await contractExecSign.executeWithSigner(signer);
+	
+	const result = await fetchTransactionRecord(contractExecSubmit.transactionId);
+
+	console.log(`Result:\n ${JSON.stringify(result)}`);
+	const returnValue = Number(result.actions[0].result_data);
+
+	return returnValue[0] === 2;
+}
+
+export async function approveProject(walletData, accountId, contractId, projectId, approval) {
+	console.log(`\n=======================================`);
+	console.log(`- Approving a project in the contract...`);
+
+	const signer = getSigner(walletData, accountId);
+
+	//Execute a contract function (transfer)
+	const contractExecTx = await new ContractExecuteTransaction()
+		.setContractId(ContractId.fromString(contractId))
+		.setGas(3000000)
+		.setFunction("approveProject", 
+			new ContractFunctionParameters()
+				.addUint16(projectId)
+				.addBool(approval)
+		)
+		.freezeWithSigner(signer);
+
+	const contractExecSign = await contractExecTx.signWithSigner(signer);
+	const contractExecSubmit = await contractExecSign.executeWithSigner(signer);
+	
+	const result = await fetchTransactionRecord(contractExecSubmit.transactionId);
+
+	console.log(`Result:\n ${JSON.stringify(result)}`);
+	const returnValue = Number(result.actions[0].result_data);
+
+	return returnValue[0] === 2;
+}
