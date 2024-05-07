@@ -5,13 +5,11 @@ import './FacultyPage.css';
 import MyLog from '../MyLog';
 import { ProjectStatus } from '../../utils';
 import FacultyRegister from './FacultyRegister';
-import { isRegisteredFcn } from '../hedera/contractUtils';
 import SearchProjects from '../search/SearchProjects';
 
-const FacultyPage = ({walletData, accountId, contractId, setPage}) => {
+const FacultyPage = ({walletData, accountId, contractId, setPage, isRegistered, setIsRegistered}) => {
   const [logText, setLogText] = useState("Welcome IITM Faculty...");
   const [projects, setProjects] = useState([]);
-  const [isRegistered, setIsRegistered] = useState(false);
 
   const fetchData = async () => {
     if(!contractId) {
@@ -20,15 +18,6 @@ const FacultyPage = ({walletData, accountId, contractId, setPage}) => {
     }
     setProjects((await getProjectDetailsFcn(walletData, accountId, contractId)));
   };
-
-  const checkingRegitration = async () => {
-    if(!contractId) {
-      setLogText("No contracts deployed ...");
-      return;
-    }
-    console.log('Checking registration...');
-    setIsRegistered(await isRegisteredFcn(walletData, accountId, contractId, true));
-  }
 
   return (
     <div className='faculty'>

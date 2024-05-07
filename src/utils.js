@@ -8,6 +8,20 @@ export const ProjectStatus = Object.freeze({
   EXTENSION: 4
 });
 
+export const UserType = Object.freeze({
+	ADMIN: 0,
+	FACULTY: 1,
+	PROJECT_STAFF: 2,
+	UNKNOWN: 3
+});
+
+export const UserPage = Object.freeze({
+	'admin': UserType.ADMIN,
+	'faculty': UserType.FACULTY,
+	'staff': UserType.PROJECT_STAFF
+	
+});
+
 
 function formatTransactionId(transactionId) {
 	const [userId, transaction] = transactionId.split('@')

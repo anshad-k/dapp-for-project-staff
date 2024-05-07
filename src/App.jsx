@@ -4,10 +4,11 @@ import walletConnectFcn from "./components/hedera/walletConnect.js";
 import AdminPage from "./components/admin/AdminPage.jsx";
 import "./styles/App.css";
 import MyLog from "./components/MyLog.jsx";
-import { isAdmin } from "./components/hedera/contractUtils.js";
+import { isAdmin, userLogin } from "./components/hedera/contractUtils.js";
 import StaffPage from "./components/staff/StaffPage.jsx";
 import FacultyPage from "./components/faculty/FacultyPage.jsx";
 import { CONTRACT_ID } from "./contracts/contractId.js";
+import { UserPage } from "./utils.js";
 
 function App() {
 	const [walletData, setWalletData] = useState();
@@ -18,6 +19,7 @@ function App() {
 	const [logTextSt, setlogTextSt] = useState("🔌 Connect hashpack wallet here...");
 
 	const [page, setPage] = useState('home');
+	const [isRegistered, setIsRegistered] = useState(false);
 
 	async function connectWallet() {
 		if (accountId !== undefined) {
@@ -35,7 +37,7 @@ function App() {
 		}
 	}
 
-	function changePage(newPage) {
+	async function changePage(newPage) {
 		if(!accountId) {
 				setlogTextSt("🔌 Connect wallet first... ⚡ ❌");
 				return;
@@ -48,7 +50,19 @@ function App() {
 				return;
 			}
 		}
-		setPage(newPage);
+		const user = await userLogin(walletData, accountId, contractId);
+		if(UserPage[newPage] === user) {
+			setIsRegistered(true);
+			setPage(newPage);
+		} else {
+			if(newPage === 'admin') {
+				setlogTextSt("🔌 Only admin can access this page... ⚡ ❌");
+				return;
+			}
+			setIsRegistered(false);
+			setPage(newPage);
+		}
+		
 	}
 
 	if(page === 'home') {
@@ -103,13 +117,13 @@ function App() {
 		);
 	} 
 	else if(page === 'admin') {
-		return <AdminPage walletData={walletData} accountId={accountId} setPage={setPage}/>;
+		return <AdminPage walletData={walletData} accountId={accountId} setPage={setPage} />;
 	} 
 	else if(page === 'staff') {
-		return <StaffPage walletData={walletData} accountId={accountId} contractId={contractId} setPage={setPage}/>;
+		return <StaffPage walletData={walletData} accountId={accountId} contractId={contractId} setPage={setPage} isRegistered={isRegistered} setIsRegistered={setIsRegistered}/>;
 	} 
 	else if(page === 'faculty') {
-		return <FacultyPage walletData={walletData} accountId={accountId} contractId={contractId} setPage={setPage}/>;
+		return <FacultyPage walletData={walletData} accountId={accountId} contractId={contractId} setPage={setPage} isRegistered={isRegistered} setIsRegistered={setIsRegistered}/>;
 	} 
 	return <></>;
 }

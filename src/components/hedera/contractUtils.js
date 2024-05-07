@@ -2,71 +2,43 @@ import {
 	ContractFunctionParameters,
 	ContractExecuteTransaction, 
 	ContractId,
-	ContractCallQuery,
-	Address
 } from "@hashgraph/sdk";
 import { fetchTransactionRecord } from "../../utils";
 
-
-async function isAdmin(walletData, accountId, contractId) {
-	console.log(`\n=======================================`);
-	console.log(`- Checking Admin privilage in the contract...`);
-
+function getSigner(walletData, accountId) {
 	const hashconnect = walletData[0];
 	const saveData = walletData[1];
 	const provider = hashconnect.getProvider("testnet", saveData.topic, accountId);
-	const signer = hashconnect.getSigner(provider);
-
-	//Execute a contract function (transfer)
-	const contractExecTx = await new ContractExecuteTransaction()
-		.setContractId(ContractId.fromString(contractId))
-		.setGas(3000000)
-		.setFunction("loginAdmin")
-		.freezeWithSigner(signer);
-
-	const contractExecSign = await contractExecTx.signWithSigner(signer);
-	const contractExecSubmit = await contractExecSign.executeWithSigner(signer);
-	const contractExecRx = await contractExecSubmit.getReceiptWithSigner(signer);
-
-  console.log(`- Is admin returns: ${contractExecRx.returnValues[0]}`);
-
-	return contractExecRx.returnValues[0] === 2;
+	return hashconnect.getSigner(provider);
 }
 
-async function isRegisteredFcn(walletData, accountId, contractId, isFaculty) {
+export async function userLogin(walletData, accountId, contractId) {
 	console.log(`\n=======================================`);
-	console.log(`- Checking if registeres in the contract...`);
+	console.log(`- User logging in the contract...`);
 
-	const functionCall = isFaculty ? "loginFaculty" : "loginProjectStaff";
-
-	const hashconnect = walletData[0];
-	const saveData = walletData[1];
-	const provider = hashconnect.getProvider("testnet", saveData.topic, accountId);
-	const signer = hashconnect.getSigner(provider);
+	const signer = getSigner(walletData, accountId);
 
 	const contractExecTx = await new ContractExecuteTransaction()
 		.setContractId(ContractId.fromString(contractId))
 		.setGas(100000)
-		.setFunction(functionCall)
+		.setFunction("loginUser")
 		.freezeWithSigner(signer);
-
 	const contractExecSign = await contractExecTx.signWithSigner(signer);
 	const contractExecSubmit = await contractExecSign.executeWithSigner(signer);
 
 	const result = await fetchTransactionRecord(contractExecSubmit.transactionId);
+
+	console.log(`Result:\n ${JSON.stringify(result)}`);
 	const returnValue = Number(result.actions[0].result_data);
-	console.log(`- Is registered returns: ${returnValue}`);
-	return returnValue === 2;
+
+	return returnValue;
 }
 
-async function registerFacultyFcn(walletData, accountId, contractId, name, department, email) {
+export async function registerFacultyFcn(walletData, accountId, contractId, name, department, email) {
 	console.log(`\n=======================================`);
 	console.log(`- Registering the faculty in the contract...`);
 
-	const hashconnect = walletData[0];
-	const saveData = walletData[1];
-	const provider = hashconnect.getProvider("testnet", saveData.topic, accountId);
-	const signer = hashconnect.getSigner(provider);
+	const signer = getSigner(walletData, accountId);
 
 	//Execute a contract function (transfer)
 	const contractExecTx = await new ContractExecuteTransaction()
@@ -77,23 +49,20 @@ async function registerFacultyFcn(walletData, accountId, contractId, name, depar
 
 	const contractExecSign = await contractExecTx.signWithSigner(signer);
 	const contractExecSubmit = await contractExecSign.executeWithSigner(signer);
-	const contractExecRx = await contractExecSubmit.getReceiptWithSigner(signer);
+	
+	const result = await fetchTransactionRecord(contractExecSubmit.transactionId);
 
-	console.log(`receipt: ${contractExecRx}`);
+	console.log(`Result:\n ${JSON.stringify(result)}`);
+	const returnValue = Number(result.actions[0].result_data);
 
-	console.log(`- Is admin returns: ${contractExecRx.returnValues[0]}`);
-
-	return contractExecRx.returnValues[0] === 2;
+	return returnValue[0] === 2;
 }
 
-async function registerStaffFcn(walletData, accountId, contractId, name, email) {
+export async function registerStaffFcn(walletData, accountId, contractId, name, email) {
 	console.log(`\n=======================================`);
 	console.log(`- Registering the staff in the contract...`);
 
-	const hashconnect = walletData[0];
-	const saveData = walletData[1];
-	const provider = hashconnect.getProvider("testnet", saveData.topic, accountId);
-	const signer = hashconnect.getSigner(provider);
+	const signer = getSigner(walletData, accountId);
 
 	//Execute a contract function (transfer)
 	const contractExecTx = await new ContractExecuteTransaction()
@@ -104,16 +73,11 @@ async function registerStaffFcn(walletData, accountId, contractId, name, email) 
 
 	const contractExecSign = await contractExecTx.signWithSigner(signer);
 	const contractExecSubmit = await contractExecSign.executeWithSigner(signer);
-	const contractExecRx = await contractExecSubmit.getReceiptWithSigner(signer);
+	
+	const result = await fetchTransactionRecord(contractExecSubmit.transactionId);
 
-	console.log(`- Is admin returns: ${contractExecRx.returnValues[0]}`);
+	console.log(`Result:\n ${JSON.stringify(result)}`);
+	const returnValue = Number(result.actions[0].result_data);
 
-	return contractExecRx.returnValues[0] === 2;
+	return returnValue[0] === 2;
 }
-
-export {
-  isAdmin,
-	isRegisteredFcn,
-	registerFacultyFcn,
-	registerStaffFcn
-};

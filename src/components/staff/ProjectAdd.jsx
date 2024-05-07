@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import MyGroup from '../MyGroup';
-import { registerFacultyFcn } from '../hedera/contractUtils';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 
@@ -11,7 +10,8 @@ const ProjectAdd = ({walletData, accountId, contractId, setIsRegistered, setLogT
   const [endDate, setEndDate] = useState('');
   const [salary, setSalary] = useState(0);
   const [facultyIds, setFacultyIds] = useState([]);
-  const [faculties, setFaculties] = useState([{name: 'anshad'}]);
+  const [projectStaffs, setProjectStaffs] = useState([]); 
+  const [faculties, setFaculties] = useState([]);
 
   const handleTitleChange = (e) => {
     setTitle(e.target.value);
@@ -33,9 +33,14 @@ const ProjectAdd = ({walletData, accountId, contractId, setIsRegistered, setLogT
     setSalary(e.target.value);
   }
 
+  const handleProjectStaffChange = (e) => {
+
+  }
+
   const handleAddfaculty = (e) => {
     setFacultyIds((prevIds) => [...prevIds, e.target.key]);
   }
+
 
   const handleRemoveFaculty = (e) => {
     setFacultyIds((prevIds) => prevIds.filter((id) => id !== e.target.key));
@@ -73,6 +78,24 @@ const ProjectAdd = ({walletData, accountId, contractId, setIsRegistered, setLogT
       <label>
         <div>Salary</div>
         <input type="text" value={salary} onChange={handleSalaryChange} />
+      </label>
+      <label>
+        <div>Project Staffs</div>
+        <Autocomplete
+          disablePortal
+          id="combo-box-demo"
+          className='staff-autocomplete'
+          options={faculties.map((staff, idx) => staff.name)}
+          // options={faculties.map((faculty, idx) => 
+          // <div 
+          //   key={idx}
+          //   onClick={handleAddfaculty}
+          // >
+          //   {faculty.name}
+          // </div>)}
+          sx={{ width: 500 }}
+          renderInput={(params) => <TextField {...params} label="Faculties" />}
+        />
       </label>
       <label>
         <div>Faculties</div>
