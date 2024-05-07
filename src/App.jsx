@@ -1,23 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import MyGroup from "./components/MyGroup.jsx";
 import walletConnectFcn from "./components/hedera/walletConnect.js";
 import AdminPage from "./components/admin/AdminPage.jsx";
 import "./styles/App.css";
 import MyLog from "./components/MyLog.jsx";
-import { isAdmin, userLogin } from "./components/hedera/contractUtils.js";
+import { userLogin } from "./components/hedera/contractUtils.js";
 import StaffPage from "./components/staff/StaffPage.jsx";
 import FacultyPage from "./components/faculty/FacultyPage.jsx";
-import { CONTRACT_ID } from "./contracts/contractId.js";
-import { UserPage } from "./utils.js";
+import { contractId } from "./contracts/contractId.js";
+import { UserPage, UserType } from "./utils.js";
+// require("dotenv").config();
 
 function App() {
 	const [walletData, setWalletData] = useState();
 	const [accountId, setAccountId] = useState();
-	const [contractId, setContractId] = useState();
-
-
 	const [logTextSt, setlogTextSt] = useState("🔌 Connect hashpack wallet here...");
-
 	const [page, setPage] = useState('home');
 	const [isRegistered, setIsRegistered] = useState(false);
 
@@ -43,14 +40,10 @@ function App() {
 				return;
 			}
 		if(!contractId) {
-			if(CONTRACT_ID.length > 0) {
-				setContractId(CONTRACT_ID);
-			} else {
-				setlogTextSt("🔌 No contract deployed... ⚡ ❌");
-				return;
-			}
+			setlogTextSt("🔌 No contract deployed... ⚡ ❌");
+			return;
 		}
-		const user = await userLogin(walletData, accountId, contractId);
+		const user = await userLogin(walletData, accountId, contractId).catch((e) => UserType.UNKNOWN);
 		if(UserPage[newPage] === user) {
 			setIsRegistered(true);
 			setPage(newPage);

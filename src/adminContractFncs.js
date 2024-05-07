@@ -1,4 +1,3 @@
-import {bytecode} from "./components/hedera/contractData.js";
 import {
 	Client,
 	ContractCreateFlow,
@@ -9,6 +8,7 @@ import {
 	AccountId
 } from "@hashgraph/sdk";
 
+const contractABI = require("./contracts/projectStaffContractIITM.json");
 
 function getAdmin() {
 	const myAccountId = "0.0.4235870";
@@ -32,6 +32,7 @@ async function adminContractDeploy() {
 	console.log(`- Deploying smart contract on Hedera...`);
 
 	const client = getAdminClient();
+	const bytecode = contractABI.data.bytecode.object;
 		
 	const contractCreate = new ContractCreateFlow()
 		.setGas(3000000)

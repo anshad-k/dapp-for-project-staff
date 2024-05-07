@@ -20,9 +20,10 @@ export async function userLogin(walletData, accountId, contractId) {
 
 	const contractExecTx = await new ContractExecuteTransaction()
 		.setContractId(ContractId.fromString(contractId))
-		.setGas(100000)
-		.setFunction("loginUser")
+		.setGas(200000)
+		.setFunction("login", new ContractFunctionParameters())
 		.freezeWithSigner(signer);
+
 	const contractExecSign = await contractExecTx.signWithSigner(signer);
 	const contractExecSubmit = await contractExecSign.executeWithSigner(signer);
 
@@ -55,7 +56,7 @@ export async function registerFacultyFcn(walletData, accountId, contractId, name
 	console.log(`Result:\n ${JSON.stringify(result)}`);
 	const returnValue = Number(result.actions[0].result_data);
 
-	return returnValue[0] === 2;
+	return returnValue === 2;
 }
 
 export async function registerStaffFcn(walletData, accountId, contractId, name, email) {

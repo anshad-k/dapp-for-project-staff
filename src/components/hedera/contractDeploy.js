@@ -4,7 +4,7 @@ import {
 	ContractCreateTransaction,
 	ContractFunctionParameters,
 } from "@hashgraph/sdk";
-const contractABI = require("../../contracts/contractABI.json")
+const contractABI = require("../../contracts/projectStaffContractIITM.json")
 
 async function contractDeployFcn(walletData, accountId) {
 	console.log(`\n=======================================`);

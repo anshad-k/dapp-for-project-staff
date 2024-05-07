@@ -6,13 +6,11 @@ import getProjectDetailsFcn from '../hedera/getProjectDetails';
 import './AdminPage.css';
 import makePayments from '../hedera/makePayments';
 import MyLog from '../MyLog';
-import { isAdmin } from '../hedera/contractUtils';
 import {adminContractDeploy, adminContractDelete} from '../../adminContractFncs';
 
 const AdminPage = ({walletData, accountId, setPage}) => {
   const [contractId, setContractId] = useState();
   const [logText, setLogText] = useState("Welcome admin...");
-  const [faculties, setFaculties] = useState([]);
   const [projects, setProjects] = useState([]);
 
   async function contractDeploy() {
@@ -38,12 +36,7 @@ const AdminPage = ({walletData, accountId, setPage}) => {
       setLogText("No contracts deployed ...");
       return;
     }
-    if(isAdmin(walletData, accountId, contractId)) {
-      setLogText("You are admin!!!!!")
-    }
-    setFaculties((await getFacultyDetailsFcn(walletData, accountId, contractId)));
     setProjects((await getProjectDetailsFcn(walletData, accountId, contractId)));
-
   };
 
   const completePayment = async () => {
@@ -93,19 +86,10 @@ const AdminPage = ({walletData, accountId, setPage}) => {
       <MyLog message={logText} />
       <div className='body'>
         <div className='section'>
-          <h2>Faculties</h2>
-          <ul>
-            {faculties.map((contract) => (
-              <li key={contract.id}>{contract.name}</li>
-            ))}
-          </ul>
-        </div>
-        
-        <div className='section'>
           <h2>Projects</h2>
           <ul>
             {projects.map((project) => (
-              <li key={project.id}>{project.name}</li>
+              <li key={project.id}>{project.title}</li>
             ))}
           </ul>
         </div>
