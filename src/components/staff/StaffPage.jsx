@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import MyGroup from '../MyGroup';
-import getProjectDetailsFcn from '../hedera/getProjectDetails';
 import './StaffPage.css';
 import MyLog from '../MyLog';
-import getFacultyDetailsFcn from '../hedera/getFacultyDetails';
 import StaffRegister from './StaffRegister';
+import { fetchFaculties, fetchProjectStaffs, fetchProjects } from '../hedera/contractQueries';
 import ProjectAdd from './ProjectAdd';
 import SearchProjects from '../search/SearchProjects';
 
@@ -12,6 +11,7 @@ const StaffPage = ({walletData, accountId, contractId, setPage, isRegistered, se
   const [logText, setLogText] = useState("Welcome project satff...");
   const [projects, setProjects] = useState([]);
   const [faculties, setFaculties] = useState([]);
+  const [projectStaffs, setProjectStaffs] = useState([]);
   const [search, setSearch] = useState(true);
 
   const fetchData = async () => {
@@ -19,8 +19,18 @@ const StaffPage = ({walletData, accountId, contractId, setPage, isRegistered, se
       setLogText("No contracts deployed ...");
       return;
     }
-    setProjects((await getProjectDetailsFcn(walletData, accountId, contractId)));
-    setFaculties((await getFacultyDetailsFcn(walletData, accountId, contractId)));
+    setProjects((await fetchProjects(walletData, accountId, contractId, true).catch((e) => {
+      setLogText("Error fetching projects ...");
+      return [];
+    })));
+    setProjectStaffs((await fetchProjectStaffs(walletData, accountId, contractId).catch((e) => {
+      setLogText("Error fetching project staffs ...");
+      return [];
+    })));
+    setFaculties((await fetchFaculties(walletData, accountId, contractId).catch((e) => {
+      setLogText("Error fetching faculties ...");
+      return [];
+    })));
   };
 
 
@@ -77,6 +87,8 @@ const StaffPage = ({walletData, accountId, contractId, setPage, isRegistered, se
             walletData={walletData} 
             accountId={accountId} 
             contractId={contractId} 
+            faculties={faculties}
+            projectStaffs={projectStaffs}
             setLogText={setLogText} 
           />
         </div>

@@ -1,42 +1,29 @@
 import React, { useState } from 'react';
 import MyGroup from '../MyGroup';
-import contractDeployFcn from '../hedera/contractDeploy';
-import getFacultyDetailsFcn from '../hedera/getFacultyDetails';
-import getProjectDetailsFcn from '../hedera/getProjectDetails';
 import './AdminPage.css';
-import makePayments from '../hedera/makePayments';
 import MyLog from '../MyLog';
-import {adminContractDeploy, adminContractDelete} from '../../adminContractFncs';
+import { fetchProjectStaffs, fetchProjects } from '../hedera/contractQueries';
+import { contractId } from '../../contracts/contractId';
 
 const AdminPage = ({walletData, accountId, setPage}) => {
-  const [contractId, setContractId] = useState();
   const [logText, setLogText] = useState("Welcome admin...");
   const [projects, setProjects] = useState([]);
+  const [projectStaffs, setProjectStaffs] = useState([]);
 
-  async function contractDeploy() {
-		if (contractId !== undefined) {
-			setLogText(`You already have contract ${contractId} ✅`);
-
-		} else if(!walletData || !accountId) {
-      setLogText("No wallet connected");
-      setPage("home");
-    }
-     else {
-      setLogText("Deploying contract ...");
-      const [cId, txIdRaw] = await adminContractDeploy();
-
-			setContractId(cId);
-			setLogText(`Successfully deployed smart contract with ID: ${cId} ✅`);
-      localStorage.setItem("contractId", cId);
-		}
-	}
 
   const fetchData = async () => {
     if(!contractId) {
       setLogText("No contracts deployed ...");
       return;
     }
-    setProjects((await getProjectDetailsFcn(walletData, accountId, contractId)));
+    setProjects((await fetchProjects(walletData, accountId, contractId, true).catch((e) => {
+      setLogText("Error fetching projects ...");
+      return [];
+    })));
+    setProjectStaffs((await fetchProjectStaffs(walletData, accountId, contractId).catch((e) => {
+      setLogText("Error fetching project staffs ...");
+      return [];
+    })));
   };
 
   const completePayment = async () => {
@@ -44,28 +31,14 @@ const AdminPage = ({walletData, accountId, setPage}) => {
       setLogText("No contracts deployed ...");
       return;
     }
-    if(makePayments(walletData, accountId, contractId) !== 2) {
-      setLogText("Payments failed ...");
-    }
+    
   }
 
-  const contractDelete = async () => {
-    if(!contractId) {
-      setLogText("No contracts deployed ...");
-      return;
-    }
-    await adminContractDelete(contractId);
-    setContractId(undefined);
-  }
 
   return (
     <div className='admin'>
       <nav className='navbar'>
         <h1>Admin Page</h1>
-        {!contractId &&  <MyGroup
-          fcn={contractDeploy}
-          buttonLabel={"Deploy Contract"}
-        />}
         <MyGroup 
           fcn={fetchData}
           buttonLabel={"Fetch Data"}  
@@ -73,10 +46,6 @@ const AdminPage = ({walletData, accountId, setPage}) => {
         <MyGroup 
           fcn={completePayment}
           buttonLabel={`Initiate Payments`}  
-        />
-        <MyGroup 
-          fcn={contractDelete}
-          buttonLabel={"Delete Contract"} 
         />
         <MyGroup 
           fcn={() => setPage("home")}

@@ -2,16 +2,16 @@ import React, { useState } from 'react';
 import MyGroup from '../MyGroup';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
+import { addProject } from '../hedera/contractUtils';
 
-const ProjectAdd = ({walletData, accountId, contractId, setIsRegistered, setLogText}) => {
+const ProjectAdd = ({walletData, accountId, contractId, faculties, projectStaffs, setLogText}) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [salary, setSalary] = useState(0);
   const [facultyIds, setFacultyIds] = useState([]);
-  const [projectStaffs, setProjectStaffs] = useState([]); 
-  const [faculties, setFaculties] = useState([]);
+  const [projectStaffIds, setProjectStaffIds] = useState([]);
 
   const handleTitleChange = (e) => {
     setTitle(e.target.value);
@@ -26,19 +26,19 @@ const ProjectAdd = ({walletData, accountId, contractId, setIsRegistered, setLogT
   }
 
   const handleEndDateChange = (e) => {
-    setEndDate(e.target.value);
+    setEndDate(Number(new Date(e.target.value).getTime()) / 1000);
   }
 
   const handleSalaryChange = (e) => {
-    setSalary(e.target.value);
+    setSalary(Number(e.target.value));
   }
 
-  const handleProjectStaffChange = (e) => {
-
+  const handleAddProjectStaff= (staffId) => {
+    setProjectStaffIds((prevIds) => [...prevIds, staffId]);
   }
 
-  const handleAddfaculty = (e) => {
-    setFacultyIds((prevIds) => [...prevIds, e.target.key]);
+  const handleAddfaculty = (facultyId) => {
+    setFacultyIds((prevIds) => [...prevIds, facultyId]);
   }
 
 
@@ -48,13 +48,25 @@ const ProjectAdd = ({walletData, accountId, contractId, setIsRegistered, setLogT
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Add your registration logic here
-    const registered = true;
-    if(registered) {
-      setIsRegistered(true);
-    } else {
-      setLogText("Project add failed ...");
+    if(!contractId) {
+      setLogText("No contracts deployed ...");
+      return;
     }
+    const success = await addProject(walletData, accountId, contractId, {
+      title,
+      description,
+      startDate,
+      endDate,
+      salary,
+      staffIds: projectStaffIds,
+      facultyIds: facultyIds
+    }).catch((e) => false);
+    if(success) {
+      setLogText(`Project ${title} added...`);
+    } else {
+      setLogText(`Error adding project ${title}...`);
+    }
+    
   };
 
   return (
@@ -76,7 +88,7 @@ const ProjectAdd = ({walletData, accountId, contractId, setIsRegistered, setLogT
         <input type="text" value={endDate} onChange={handleEndDateChange} />
       </label>
       <label>
-        <div>Salary</div>
+        <div>Salary (tinybars)</div>
         <input type="text" value={salary} onChange={handleSalaryChange} />
       </label>
       <label>

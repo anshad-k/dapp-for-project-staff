@@ -18,6 +18,8 @@ function getAdmin() {
 	return [myAccountId, myPrivateKey];
 }
 
+// module.exports = {getAdmin};
+
 function getAdminClient() {
 	const [myAccountId, myPrivateKey] = getAdmin();
 	const client = Client.forTestnet();
