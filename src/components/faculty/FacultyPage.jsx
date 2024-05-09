@@ -34,6 +34,12 @@ const FacultyPage = ({walletData, accountId, contractId, setPage, isRegistered, 
     });
     if(success) {
       setLogText(`Project ${projectId} ${approval ? 'approved' : 'rejected'}...`);
+      setProjects((prevProjects) => prevProjects.map((project) => {
+        if(project.id === projectId) {
+          return {...project, status: ProjectStatus.APPROVED};
+        }
+        return project;
+      }));
     } else {
       setLogText(`Error approving project ${projectId}...`);
     }

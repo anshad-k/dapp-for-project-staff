@@ -6,6 +6,7 @@ import { fetchProjects } from '../hedera/contractQueries';
 import { contractId } from '../../contracts/contractId';
 import MyButton from '../MyButton';
 import { paySalary } from '../hedera/makePayments';
+import { ProjectStatus } from '../../utils';
 
 const AdminPage = ({walletData, accountId, setPage}) => {
   const [logText, setLogText] = useState("Welcome admin...");
@@ -38,6 +39,12 @@ const AdminPage = ({walletData, accountId, setPage}) => {
     });
     if(success) {
       setLogText(`Payment made to project ${projectId}...`);
+      setProjects((prevProjects) => prevProjects.map((p) => {
+        if(p.id === projectId) {
+          return {...p, status: ProjectStatus.COMPLETED};
+        }
+        return p;
+      }));
     }
     else {
       setLogText(`Error making payment to project ${projectId}...`);
@@ -67,7 +74,7 @@ const AdminPage = ({walletData, accountId, setPage}) => {
               <li key={project.id} className='list-element'>
                 <span>{project.title + ":  "}</span>
                 <span>{project.description}</span>
-                {project.endDate <= today() && <MyButton fcn={() => makePayment(project.id)} buttonLabel='Pay'/>}
+                {project.endDate <= today() && project.status === ProjectStatus.COMPLETED && <MyButton fcn={() => makePayment(project.id)} buttonLabel='Pay'/>}
               </li>
             ))}
           </ul>

@@ -9,7 +9,7 @@ const ProjectAdd = ({walletData, accountId, contractId, faculties, setLogText}) 
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [salary, setSalary] = useState(0);
-  const [facultyIds, setFacultyIds] = useState([1, 2]);
+  const [facultyIds, setFacultyIds] = useState([]);
   // const [projectStaffIds, setProjectStaffIds] = useState([1]);
 
   const handleTitleChange = (e) => {

@@ -31,6 +31,6 @@ export async function paySalary(walletData, accountId, receiver, amount) {
 
 		const result = transferReceipt.status.toString();
 		console.log(`- The transfer status is: ${result}`);
-		return result == "SUCCESS";
+		return result === "SUCCESS";
 }
 

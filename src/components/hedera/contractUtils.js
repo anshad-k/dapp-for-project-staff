@@ -161,7 +161,7 @@ export async function approveProject(walletData, accountId, contractId, projectI
 		.setGas(3000000)
 		.setFunction("approveProject", 
 			new ContractFunctionParameters()
-				.addUint16(projectId)
+				.addUint256(Number(projectId))
 				.addBool(approval)
 		)
 		.freezeWithSigner(signer);
