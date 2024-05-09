@@ -61,9 +61,18 @@
       border: 1px solid #051415;
       border-radius: 5px;
     }
-    /* .faculty-autocomplete {
-      background-color: white !important
-    } */
+    ul {
+      width: 40%;
+      height: 30px;
+
+      .list-item  {
+        display: flex;
+        flex-direction: row;
+        justify-content: left;
+        align-items: center;
+        gap: 5px;
+      }
+    }
   }
 }
 

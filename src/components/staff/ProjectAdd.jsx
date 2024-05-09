@@ -1,17 +1,16 @@
 import React, { useState } from 'react';
 import MyGroup from '../MyGroup';
-import Autocomplete from '@mui/material/Autocomplete';
-import TextField from '@mui/material/TextField';
 import { addProject } from '../hedera/contractUtils';
+import MyButton from '../MyButton';
 
-const ProjectAdd = ({walletData, accountId, contractId, faculties, projectStaffs, setLogText}) => {
+const ProjectAdd = ({walletData, accountId, contractId, faculties, setLogText}) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [salary, setSalary] = useState(0);
   const [facultyIds, setFacultyIds] = useState([1, 2]);
-  const [projectStaffIds, setProjectStaffIds] = useState([1]);
+  // const [projectStaffIds, setProjectStaffIds] = useState([1]);
 
   const handleTitleChange = (e) => {
     setTitle(e.target.value);
@@ -33,17 +32,17 @@ const ProjectAdd = ({walletData, accountId, contractId, faculties, projectStaffs
     setSalary(e.target.value);
   }
 
-  const handleAddProjectStaff= (staffId) => {
-    setProjectStaffIds((prevIds) => [...prevIds, staffId]);
-  }
+  // const handleAddProjectStaff= (staffId) => {
+  //   setProjectStaffIds((prevIds) => [...prevIds, staffId]);
+  // }
 
   const handleAddfaculty = (facultyId) => {
-    setFacultyIds((prevIds) => [...prevIds, facultyId]);
-  }
-
-
-  const handleRemoveFaculty = (e) => {
-    setFacultyIds((prevIds) => prevIds.filter((id) => id !== e.target.key));
+    setFacultyIds((prevIds) => {
+      if(prevIds.includes(facultyId)) {
+        return prevIds;
+      }
+      return [...prevIds, facultyId];
+    });
   }
 
   const handleSubmit = async (e) => {
@@ -58,7 +57,7 @@ const ProjectAdd = ({walletData, accountId, contractId, faculties, projectStaffs
       startDate: Number(new Date(startDate).getTime()) / 1000,
       endDate: Number(new Date(endDate).getTime()) / 1000,
       salary: Number(salary),
-      staffIds: projectStaffIds,
+      staffIds: [1],
       facultyIds: facultyIds
     }).catch((e) => false);
     if(success) {
@@ -91,47 +90,19 @@ const ProjectAdd = ({walletData, accountId, contractId, faculties, projectStaffs
         <div>Salary (tinybars)</div>
         <input type="text" value={salary} onChange={handleSalaryChange} />
       </label>
-      {/* <label>
-        <div>Project Members</div>
-        <Autocomplete
-          disablePortal
-          id="combo-box-demo"
-          className='staff-autocomplete'
-          options={projectStaffs.map((staff, idx) => staff.name)}
-          // options={faculties.map((faculty, idx) => 
-          // <div 
-          //   key={idx}
-          //   onClick={handleAddfaculty}
-          // >
-          //   {faculty.name}
-          // </div>)}
-          sx={{ width: 500 }}
-          renderInput={(params) => <TextField {...params} label="Project members" />}
-        />
-      </label>
       <label>
         <div>Faculties</div>
-        <Autocomplete
-          disablePortal
-          id="combo-box-demo"
-          className='faculty-autocomplete'
-          options={faculties.map((faculty, idx) => faculty.name)}
-          // options={faculties.map((faculty, idx) => 
-          // <div 
-          //   key={idx}
-          //   onClick={handleAddfaculty}
-          // >
-          //   {faculty.name}
-          // </div>)}
-          sx={{ width: 500 }}
-          renderInput={(params) => <TextField {...params} label="Faculties" />}
-        />
-      </label> */}
-      {/* <ul>
-        {facultyIds.map((facultyId) => (
-          <li key={facultyId}>{faculties[facultyId].name} <span key={facultyId} onClick={handleRemoveFaculty}>❌</span></li>
-        ))}
-      </ul> */}
+        <ul>
+          {faculties
+          .filter(faculty => !facultyIds.includes(faculty.id))
+          .map((faculty, idx) => (
+            <li key={idx} className='list-item'>
+              <span>{faculty.name}</span>
+              <MyButton fcn={() => handleAddfaculty(faculty.id)} buttonLabel="Add" />
+            </li>         
+          ))}
+        </ul>
+      </label>
       <MyGroup buttonLabel="Register" fcn={handleSubmit} />
     </div>
   );

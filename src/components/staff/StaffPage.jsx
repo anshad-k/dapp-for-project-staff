@@ -3,7 +3,7 @@ import MyGroup from '../MyGroup';
 import './StaffPage.css';
 import MyLog from '../MyLog';
 import StaffRegister from './StaffRegister';
-import { fetchFaculties, fetchProjectStaffs, fetchProjects } from '../hedera/contractQueries';
+import { fetchFaculties, fetchProjects } from '../hedera/contractQueries';
 import ProjectAdd from './ProjectAdd';
 import SearchProjects from '../search/SearchProjects';
 
@@ -11,7 +11,6 @@ const StaffPage = ({walletData, accountId, contractId, setPage, isRegistered, se
   const [logText, setLogText] = useState("Welcome project satff...");
   const [projects, setProjects] = useState([]);
   const [faculties, setFaculties] = useState([]);
-  const [projectStaffs, setProjectStaffs] = useState([]);
   const [search, setSearch] = useState(true);
 
   const fetchData = async () => {
@@ -21,10 +20,6 @@ const StaffPage = ({walletData, accountId, contractId, setPage, isRegistered, se
     }
     setProjects((await fetchProjects(walletData, accountId, contractId, false).catch((e) => {
       setLogText("Error fetching projects ...");
-      return [];
-    })));
-    setProjectStaffs((await fetchProjectStaffs(walletData, accountId, contractId).catch((e) => {
-      setLogText("Error fetching project staffs ...");
       return [];
     })));
     setFaculties((await fetchFaculties(walletData, accountId, contractId).catch((e) => {
@@ -91,7 +86,6 @@ const StaffPage = ({walletData, accountId, contractId, setPage, isRegistered, se
             accountId={accountId} 
             contractId={contractId} 
             faculties={faculties}
-            projectStaffs={projectStaffs}
             setLogText={setLogText} 
           />
         </div>

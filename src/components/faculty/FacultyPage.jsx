@@ -60,8 +60,8 @@ const FacultyPage = ({walletData, accountId, contractId, setPage, isRegistered, 
                 <li key={project.id} className='list-element'>
                   <span>{project.title}</span>
                   <span>{project.description}</span>
-                  <MyButton fcn={() => approveSelectedProject(project.id, true)} buttonLabel="Approve" />
-                  <MyButton fcn={() => approveSelectedProject(project.id, false)} buttonLabel="Reject"/>
+                  <MyButton fcn={() => approveSelectedProject(project.id, 1)} buttonLabel="Approve" />
+                  <MyButton fcn={() => approveSelectedProject(project.id, 0)} buttonLabel="Reject"/>
                 </li>
               ))}
             </ul>
@@ -75,8 +75,8 @@ const FacultyPage = ({walletData, accountId, contractId, setPage, isRegistered, 
                 <li key={project.id} className='list-element'>
                   <span>{project.title + ":  "}</span>
                   <span>{project.description}</span>
-                  <MyButton fcn={() => approveSelectedProject(project.id, true)} buttonLabel="Approve" />
-                  <MyButton fcn={() => approveSelectedProject(project.id, false)} buttonLabel="Reject"/>
+                  <MyButton fcn={() => approveSelectedProject(project.id, 1)} buttonLabel="Approve" />
+                  <MyButton fcn={() => approveSelectedProject(project.id, 0)} buttonLabel="Reject"/>
                 </li>
               ))}
             </ul>
