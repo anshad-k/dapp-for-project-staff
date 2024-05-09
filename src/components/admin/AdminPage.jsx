@@ -4,13 +4,20 @@ import './AdminPage.css';
 import MyLog from '../MyLog';
 import { fetchProjects } from '../hedera/contractQueries';
 import { contractId } from '../../contracts/contractId';
-import { paySalary } from '../hedera/contractUtils';
 import MyButton from '../MyButton';
+import { paySalary } from '../hedera/makePayments';
 
 const AdminPage = ({walletData, accountId, setPage}) => {
   const [logText, setLogText] = useState("Welcome admin...");
   const [projects, setProjects] = useState([]);
 
+  const today = () => {
+    const todayDate = new Date();
+    const dd = todayDate.getDate();
+    const mm = todayDate.getMonth() + 1;
+    const yyyy = todayDate.getFullYear();
+    return Number(new Date(`${dd}-${mm}-${yyyy}`).getTime()) / 1000;
+  };
 
   const fetchData = async () => {
     if(!contractId) {
@@ -25,7 +32,10 @@ const AdminPage = ({walletData, accountId, setPage}) => {
 
   const makePayment = async (projectId) => {
     const project = projects.find((p) => p.id === projectId);
-    const success = await paySalary(walletData, accountId, project.staffAccountId, project.salary).catch((e) => false);
+    const success = await paySalary(walletData, accountId, project.staffAccountId, project.salary).catch((e) => {
+      console.error(e);
+      return false;
+    });
     if(success) {
       setLogText(`Payment made to project ${projectId}...`);
     }
@@ -57,7 +67,7 @@ const AdminPage = ({walletData, accountId, setPage}) => {
               <li key={project.id} className='list-element'>
                 <span>{project.title + ":  "}</span>
                 <span>{project.description}</span>
-                {project.endDate <= ((new Date().getTime()) / 1000) && <MyButton fcn={() => makePayment(project.id)} buttonLabel='Pay'/>}
+                {project.endDate <= today() && <MyButton fcn={() => makePayment(project.id)} buttonLabel='Pay'/>}
               </li>
             ))}
           </ul>

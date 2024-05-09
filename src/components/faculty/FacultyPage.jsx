@@ -28,7 +28,10 @@ const FacultyPage = ({walletData, accountId, contractId, setPage, isRegistered, 
       setLogText("No contracts deployed ...");
       return;
     }
-    const success = await approveProject(walletData, accountId, contractId, projectId, approval).catch((e) => false);
+    const success = await approveProject(walletData, accountId, contractId, projectId, approval).catch((e) => {
+      console.error(e);
+      return false;
+    });
     if(success) {
       setLogText(`Project ${projectId} ${approval ? 'approved' : 'rejected'}...`);
     } else {
@@ -58,10 +61,10 @@ const FacultyPage = ({walletData, accountId, contractId, setPage, isRegistered, 
                 .filter((project) => project.status === ProjectStatus.PENDING)
                 .map((project) => (
                 <li key={project.id} className='list-element'>
-                  <span>{project.title}</span>
+                  <span>{project.title + ":  "}</span>
                   <span>{project.description}</span>
-                  <MyButton fcn={() => approveSelectedProject(project.id, 1)} buttonLabel="Approve" />
-                  <MyButton fcn={() => approveSelectedProject(project.id, 0)} buttonLabel="Reject"/>
+                  <MyButton fcn={() => approveSelectedProject(project.id, true)} buttonLabel="Approve" />
+                  <MyButton fcn={() => approveSelectedProject(project.id, false)} buttonLabel="Reject"/>
                 </li>
               ))}
             </ul>
@@ -75,8 +78,8 @@ const FacultyPage = ({walletData, accountId, contractId, setPage, isRegistered, 
                 <li key={project.id} className='list-element'>
                   <span>{project.title + ":  "}</span>
                   <span>{project.description}</span>
-                  <MyButton fcn={() => approveSelectedProject(project.id, 1)} buttonLabel="Approve" />
-                  <MyButton fcn={() => approveSelectedProject(project.id, 0)} buttonLabel="Reject"/>
+                  <MyButton fcn={() => approveSelectedProject(project.id, true)} buttonLabel="Approve" />
+                  <MyButton fcn={() => approveSelectedProject(project.id, false)} buttonLabel="Reject"/>
                 </li>
               ))}
             </ul>
@@ -96,11 +99,6 @@ const FacultyPage = ({walletData, accountId, contractId, setPage, isRegistered, 
           </div>
         </div>
         }
-        
-        {/* <div className='section' style={{visibility: isRegistered ? 'visible' : 'hidden'}}>
-          <h2>Search Projects</h2>
-          <SearchProjects projects={projects} />
-        </div> */}
   </div>);
 };
 

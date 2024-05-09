@@ -17,7 +17,7 @@ function getAdmin() {
 	return [myAccountId, myPrivateKey];
 }
 
-// module.exports = {getAdmin};
+
 
 function getAdminClient() {
 	const [myAccountId, myPrivateKey] = getAdmin();
@@ -25,6 +25,7 @@ function getAdminClient() {
 	client.setOperator(myAccountId, myPrivateKey);
 	return client;
 }
+
 
 async function adminContractDeploy() {
 	console.log(`\n=======================================`);

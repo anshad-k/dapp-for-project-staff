@@ -99,7 +99,7 @@ const ProjectAdd = ({walletData, accountId, contractId, faculties, setLogText}) 
             <li key={idx} className='list-item'>
               <span>{faculty.name}</span>
               <MyButton fcn={() => handleAddfaculty(faculty.id)} buttonLabel="Add" />
-            </li>         
+            </li>     
           ))}
         </ul>
       </label>
