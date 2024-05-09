@@ -64,13 +64,12 @@
     ul {
       width: 40%;
       height: 30px;
-
-      .list-item  {
+      li  {
         display: flex;
         flex-direction: row;
-        justify-content: left;
+        justify-content: center;
         align-items: center;
-        gap: 5px;
+        gap: 10px;
       }
     }
   }

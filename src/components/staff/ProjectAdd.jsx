@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import MyGroup from '../MyGroup';
 import { addProject } from '../hedera/contractUtils';
-import MyButton from '../MyButton';
 
 const ProjectAdd = ({walletData, accountId, contractId, faculties, setLogText}) => {
   const [title, setTitle] = useState('');
@@ -31,10 +30,6 @@ const ProjectAdd = ({walletData, accountId, contractId, faculties, setLogText}) 
   const handleSalaryChange = (e) => {
     setSalary(e.target.value);
   }
-
-  // const handleAddProjectStaff= (staffId) => {
-  //   setProjectStaffIds((prevIds) => [...prevIds, staffId]);
-  // }
 
   const handleAddfaculty = (facultyId) => {
     setFacultyIds((prevIds) => {
@@ -98,7 +93,7 @@ const ProjectAdd = ({walletData, accountId, contractId, faculties, setLogText}) 
           .map((faculty, idx) => (
             <li key={idx} className='list-item'>
               <span>{faculty.name}</span>
-              <MyButton fcn={() => handleAddfaculty(faculty.id)} buttonLabel="Add" />
+              <button onClick={() => handleAddfaculty(faculty.id)}>Add</button>
             </li>     
           ))}
         </ul>
