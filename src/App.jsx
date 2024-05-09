@@ -17,6 +17,7 @@ function App() {
 	const [logTextSt, setlogTextSt] = useState("🔌 Connect hashpack wallet here...");
 	const [page, setPage] = useState('home');
 	const [isRegistered, setIsRegistered] = useState(false);
+	const [user, setUser] = useState(UserType.UNKNOWN);
 
 	async function connectWallet() {
 		if (accountId !== undefined) {
@@ -43,10 +44,15 @@ function App() {
 			setlogTextSt("🔌 No contract deployed... ⚡ ❌");
 			return;
 		}
-		const user = await userLogin(walletData, accountId, contractId).catch((e) => UserType.UNKNOWN);
-		if(UserPage[newPage] === user) {
+		if(user === UserPage[newPage]) {
+			setPage(newPage);
+			return;
+		}
+		const loggedUser = await userLogin(walletData, accountId, contractId).catch((e) => UserType.UNKNOWN);
+		if(UserPage[newPage] === loggedUser) {
 			setIsRegistered(true);
 			setPage(newPage);
+			setUser(loggedUser);
 		} else {
 			if(newPage === 'admin') {
 				setlogTextSt("🔌 Only admin can access this page... ⚡ ❌");

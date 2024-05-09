@@ -17,7 +17,7 @@ const StaffRegister = ({walletData, accountId, contractId, setIsRegistered, setL
   const handleSubmit = async (e) => {
     e.preventDefault();
     // Add your registration logic here
-    const registered = await registerStaffFcn(walletData, accountId, contractId, name, email);
+    const registered = await registerStaffFcn(walletData, accountId, contractId, name, email).catch((e) => false);
     if(registered) {
       setIsRegistered(true);
     } else {

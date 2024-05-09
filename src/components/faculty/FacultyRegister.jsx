@@ -22,7 +22,7 @@ const FacultyRegister = ({walletData, accountId, contractId, setIsRegistered, se
   const handleSubmit = async (e) => {
     e.preventDefault();
     // Add your registration logic here
-    const registered = await registerFacultyFcn(walletData, accountId, contractId, name, department, email);
+    const registered = await registerFacultyFcn(walletData, accountId, contractId, name, department, email).catch((e) => false);
     if(registered) {
       setIsRegistered(true);
     } else {

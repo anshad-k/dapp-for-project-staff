@@ -37,7 +37,7 @@ const StaffPage = ({walletData, accountId, contractId, setPage, isRegistered, se
   return (
     <div className='staff'>
       <nav className='navbar'>
-        <h1>Faculty Page</h1>
+        <h1>Project Staff Page</h1>
         <MyGroup 
           fcn={() => setSearch(false)}
           buttonLabel={`Add Project`}  

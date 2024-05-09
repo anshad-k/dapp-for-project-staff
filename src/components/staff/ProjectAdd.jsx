@@ -10,8 +10,8 @@ const ProjectAdd = ({walletData, accountId, contractId, faculties, projectStaffs
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [salary, setSalary] = useState(0);
-  const [facultyIds, setFacultyIds] = useState([]);
-  const [projectStaffIds, setProjectStaffIds] = useState([]);
+  const [facultyIds, setFacultyIds] = useState([1, 2]);
+  const [projectStaffIds, setProjectStaffIds] = useState([1]);
 
   const handleTitleChange = (e) => {
     setTitle(e.target.value);
@@ -26,11 +26,11 @@ const ProjectAdd = ({walletData, accountId, contractId, faculties, projectStaffs
   }
 
   const handleEndDateChange = (e) => {
-    setEndDate(Number(new Date(e.target.value).getTime()) / 1000);
+    setEndDate(e.target.value);
   }
 
   const handleSalaryChange = (e) => {
-    setSalary(Number(e.target.value));
+    setSalary(e.target.value);
   }
 
   const handleAddProjectStaff= (staffId) => {
@@ -55,9 +55,9 @@ const ProjectAdd = ({walletData, accountId, contractId, faculties, projectStaffs
     const success = await addProject(walletData, accountId, contractId, {
       title,
       description,
-      startDate,
-      endDate,
-      salary,
+      startDate: Number(new Date(startDate).getTime()) / 1000,
+      endDate: Number(new Date(endDate).getTime()) / 1000,
+      salary: Number(salary),
       staffIds: projectStaffIds,
       facultyIds: facultyIds
     }).catch((e) => false);
@@ -91,13 +91,13 @@ const ProjectAdd = ({walletData, accountId, contractId, faculties, projectStaffs
         <div>Salary (tinybars)</div>
         <input type="text" value={salary} onChange={handleSalaryChange} />
       </label>
-      <label>
-        <div>Project Staffs</div>
+      {/* <label>
+        <div>Project Members</div>
         <Autocomplete
           disablePortal
           id="combo-box-demo"
           className='staff-autocomplete'
-          options={faculties.map((staff, idx) => staff.name)}
+          options={projectStaffs.map((staff, idx) => staff.name)}
           // options={faculties.map((faculty, idx) => 
           // <div 
           //   key={idx}
@@ -106,7 +106,7 @@ const ProjectAdd = ({walletData, accountId, contractId, faculties, projectStaffs
           //   {faculty.name}
           // </div>)}
           sx={{ width: 500 }}
-          renderInput={(params) => <TextField {...params} label="Faculties" />}
+          renderInput={(params) => <TextField {...params} label="Project members" />}
         />
       </label>
       <label>
@@ -126,12 +126,12 @@ const ProjectAdd = ({walletData, accountId, contractId, faculties, projectStaffs
           sx={{ width: 500 }}
           renderInput={(params) => <TextField {...params} label="Faculties" />}
         />
-      </label>
-      <ul>
+      </label> */}
+      {/* <ul>
         {facultyIds.map((facultyId) => (
           <li key={facultyId}>{faculties[facultyId].name} <span key={facultyId} onClick={handleRemoveFaculty}>❌</span></li>
         ))}
-      </ul>
+      </ul> */}
       <MyGroup buttonLabel="Register" fcn={handleSubmit} />
     </div>
   );

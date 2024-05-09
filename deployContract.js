@@ -1,7 +1,6 @@
 const {
 	Client,
 	ContractCreateFlow,
-	Hbar,
 } = require("@hashgraph/sdk");
 require("dotenv").config();
 const fs = require("fs");

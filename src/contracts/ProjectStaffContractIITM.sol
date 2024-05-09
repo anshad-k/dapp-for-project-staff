@@ -1,7 +1,5 @@
-// SPDX-License-Identifier: GPL-3.0
+// SPDX-License-Identifier: GPL-4.0
 pragma solidity >=0.8.9 <0.9.0;
-
-// import "./HederaTokenService.sol";
 
 contract projectStaffContractIITM {
 
@@ -49,6 +47,16 @@ contract projectStaffContractIITM {
         address payable currentApprover;
     }
 
+    struct ShowProject {
+        uint16 id;
+        bytes20 title;
+        bytes30 description;
+        ProjectStatus status;
+        uint64 startDate;
+        uint64 endDate;
+        uint32 salary;
+    }
+
     struct ProjectStaff {
         bytes20 name;
         address payable staffAddress;
@@ -59,11 +67,12 @@ contract projectStaffContractIITM {
     struct ShowStaff {
       uint16 id;
       bytes20 name;
+      address staffAddress;
     }
 
     address payable admin;
 
-    Faculty[] public  faculties;
+    Faculty[] public faculties;
     mapping (address => uint16) facultyMap;
 
     ProjectStaff[] public projectStaffs;
@@ -74,20 +83,9 @@ contract projectStaffContractIITM {
 
     constructor() payable {
         admin = payable(msg.sender);
-     }
+    }
 
-    // function sendSalary(address recipient, uint64 amount) public {
-    //     int64 recipientId = addressToAccountId(recipient);
-    //     tokenService.transferToken(hbarTokenId, recipientId, int64(amount));
-    // }
-
-    // function addressToAccountId(address addr) public pure returns (int64) {
-    //     bytes memory addressBytes = abi.encodePacked(addr);
-    //     bytes32 hash = sha256(addressBytes);
-    //     return int64(uint64(uint256(hash)));
-    // }
-
-    function login() external returns (UserType) {
+    function login() external view returns (UserType) {
       if(msg.sender == admin) {
         return UserType.ADMIN;
       } else if(facultyMap[msg.sender] != 0) {
@@ -230,22 +228,6 @@ contract projectStaffContractIITM {
       }
     }
 
-    function makePayments() external payable returns (uint8) {
-      require(admin == msg.sender, "4 : Not admin");
-      for(uint i = 0; i < projects.length; i++) {
-        Project storage project = projects[i];
-        if(project.status == ProjectStatus.APPROVED && block.timestamp >= project.endDate) {
-          for(uint16 j = 0; j < project.projectStaffs.length; j++) {
-              require(admin.balance >= project.salary, "5 : Not enough balance");
-              bool success = projectStaffs[project.projectStaffs[j] - 1].staffAddress.send(msg.value);
-              require(success, "5 : Transfer failed");
-          }
-          project.status = ProjectStatus.COMPLETED;
-        }
-      }
-      return 2;
-    }
-
     function getAllFaculties() external view returns (ShowFaculty[] memory) {
       ShowFaculty[] memory allFaculties = new ShowFaculty[](faculties.length);
       for(uint16 i = 0; i < faculties.length; i++) {
@@ -255,9 +237,21 @@ contract projectStaffContractIITM {
       return allFaculties;
     }
 
-    function getAllProjects(bool needAll) external view returns (Project[] memory) {
+    function getAllProjects(bool needAll) external view returns (ShowProject[] memory) {   
       if(needAll) {
-        return projects;
+        ShowProject[] memory allProjects = new ShowProject[](projects.length);
+        for(uint16 i = 0; i < projects.length; i++) {
+          allProjects[i] = ShowProject({
+            id: projects[i].id,
+            title: projects[i].title,
+            description: projects[i].description,
+            status: projects[i].status,
+            startDate: projects[i].startDate,
+            endDate: projects[i].endDate,
+            salary: projects[i].salary
+          });
+        }
+        return allProjects;
       }
       uint16[] storage userProjectIds;
       if(facultyMap[msg.sender] != 0) {
@@ -265,11 +259,20 @@ contract projectStaffContractIITM {
       } else if(staffMap[msg.sender] != 0) {
         userProjectIds = projectStaffs[staffMap[msg.sender] - 1].projectIds;
       } else {
-        return new Project[](0);
+        return new ShowProject[](0);
       }
-      Project[] memory userProjects = new Project[](userProjectIds.length);
+      ShowProject[] memory userProjects = new ShowProject[](userProjectIds.length);
       for(uint16 i = 0; i < userProjectIds.length; i++) {
-        userProjects[i] = (projects[userProjectIds[i] - 1]);
+        Project storage proj = projects[userProjectIds[i] - 1];
+        userProjects[i] = ShowProject({
+            id: proj.id,
+            title: proj.title,
+            description: proj.description,
+            status: proj.status,
+            startDate: proj.startDate,
+            endDate: proj.endDate,
+            salary: proj.salary
+          });
       }
       return userProjects;
     }
@@ -279,6 +282,7 @@ contract projectStaffContractIITM {
       for(uint16 i = 0; i < projectStaffs.length; i++) {
         allProjectStaffs[i].id = i + 1;
         allProjectStaffs[i].name = projectStaffs[i].name;
+        allProjectStaffs[i].staffAddress = projectStaffs[i].staffAddress;
       }
       return allProjectStaffs;
     }

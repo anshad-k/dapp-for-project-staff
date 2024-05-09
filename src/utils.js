@@ -19,8 +19,26 @@ export const UserPage = Object.freeze({
 	'admin': UserType.ADMIN,
 	'faculty': UserType.FACULTY,
 	'staff': UserType.PROJECT_STAFF
-	
 });
+
+export function hex2str(hexx) {
+	let hex = hexx.toString();//force conversion
+	let str = '';
+	if(hex.substring(0, 2) === '0x') {
+		hex = hex.substring(2);
+	}
+	for (let i = 0; i < hex.length; i += 2)
+			str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
+	return str;
+}
+
+export function hex2num(hexx) {
+	let hex = hexx.toString();//force conversion
+	if(hex.substring(0, 2) === '0x') {
+		hex = hex.substring(2);
+	}
+	return parseInt(hex, 16);
+}
 
 
 function formatTransactionId(transactionId) {
@@ -31,7 +49,7 @@ function formatTransactionId(transactionId) {
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
 export async function fetchTransactionRecord(transactionID) {
-	await delay(3000);
+	await delay(4000);
 	const transactionId = formatTransactionId(transactionID);
 	const url = `https://testnet.mirrornode.hedera.com/api/v1/contracts/results/${transactionId}/actions`;
 	const result = await axios.get(url)

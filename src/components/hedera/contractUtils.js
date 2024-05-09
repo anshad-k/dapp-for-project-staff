@@ -30,6 +30,7 @@ export async function userLogin(walletData, accountId, contractId) {
 	const result = await fetchTransactionRecord(contractExecSubmit.transactionId);
 
 	console.log(`Result:\n ${JSON.stringify(result)}`);
+	console.log("result data: ", result.actions[0].result_data);
 	const returnValue = Number(result.actions[0].result_data);
 
 	return returnValue;
@@ -80,7 +81,7 @@ export async function registerStaffFcn(walletData, accountId, contractId, name, 
 	console.log(`Result:\n ${JSON.stringify(result)}`);
 	const returnValue = Number(result.actions[0].result_data);
 
-	return returnValue[0] === 2;
+	return returnValue === 2;
 }
 
 export async function addProject(walletData, accountId, contractId, project) {
@@ -113,7 +114,7 @@ export async function addProject(walletData, accountId, contractId, project) {
 	console.log(`Result:\n ${JSON.stringify(result)}`);
 	const returnValue = Number(result.actions[0].result_data);
 
-	return returnValue[0] === 2;
+	return returnValue === 2;
 }
 
 export async function extendProject(walletData, accountId, contractId, projectId, endDate) {
@@ -141,7 +142,7 @@ export async function extendProject(walletData, accountId, contractId, projectId
 	console.log(`Result:\n ${JSON.stringify(result)}`);
 	const returnValue = Number(result.actions[0].result_data);
 
-	return returnValue[0] === 2;
+	return returnValue === 2;
 }
 
 export async function approveProject(walletData, accountId, contractId, projectId, approval) {
@@ -169,5 +170,5 @@ export async function approveProject(walletData, accountId, contractId, projectI
 	console.log(`Result:\n ${JSON.stringify(result)}`);
 	const returnValue = Number(result.actions[0].result_data);
 
-	return returnValue[0] === 2;
+	return returnValue === 2;
 }

@@ -1,1 +1,1 @@
-export const contractId = "0.0.4330746";
+export const contractId = "0.0.4333770";

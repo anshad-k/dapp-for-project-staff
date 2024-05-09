@@ -1,6 +1,7 @@
-import { ContractFunctionParameters, ContractExecuteTransaction, ContractId } from "@hashgraph/sdk";
+import { ContractFunctionParameters, ContractExecuteTransaction, ContractId, AccountId } from "@hashgraph/sdk";
+import Long from "long";
 
-async function makePayments(walletData, accountId, contractId) {
+export async function makePayment(walletData, accountId, contractId, staffAddress, amount) {
 	console.log(`\n=======================================`);
 	console.log(`- making payments to staffs in the contract...`);
 
@@ -9,6 +10,7 @@ async function makePayments(walletData, accountId, contractId) {
 	const provider = hashconnect.getProvider("testnet", saveData.topic, accountId);
 	const signer = hashconnect.getSigner(provider);
 
+	const receipient = new AccountId(staffAddress);
 	//Execute a contract function (transfer)
 	const contractExecTx = await new ContractExecuteTransaction()
 		.setContractId(ContractId.fromString(contractId))
@@ -18,11 +20,8 @@ async function makePayments(walletData, accountId, contractId) {
 
 	const contractExecSign = await contractExecTx.signWithSigner(signer);
 	const contractExecSubmit = await contractExecSign.executeWithSigner(signer);
-	const contractExecRx = await provider.getTransactionReceipt(contractExecSubmit.transactionId);
 
-  console.log(`- Faculty details: ${contractExecRx.returnValues[0]}`);
-
-	return contractExecRx.returnValues[0];
+	const result = await provider.getTransactionReceipt(contractExecSubmit.transactionId);
+	console.log(`Result:\n ${JSON.stringify(result)}`);
 }
 
-export default makePayments;
