@@ -74,7 +74,7 @@ const AdminPage = ({walletData, accountId, setPage}) => {
               <li key={project.id} className='list-element'>
                 <span>{project.title + ":  "}</span>
                 <span>{project.description}</span>
-                {project.endDate <= today() && project.status === ProjectStatus.COMPLETED && <MyButton fcn={() => makePayment(project.id)} buttonLabel='Pay'/>}
+                {project.endDate <= today() && project.status === ProjectStatus.APPROVED && <MyButton fcn={() => makePayment(project.id)} buttonLabel='Pay'/>}
               </li>
             ))}
           </ul>
