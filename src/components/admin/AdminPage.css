@@ -37,3 +37,12 @@
 .admin .body .section {
   width: 50%;
 }
+
+.list-element {
+	background-color: #1366cb;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	gap: 10px;
+}

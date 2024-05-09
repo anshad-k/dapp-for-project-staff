@@ -34,7 +34,7 @@ export function decodeProjectData(result_data) {
     result_data = result_data.substring(2);
   }
   const projects = [];
-  for(let i = 128; i < result_data.length; i += 448) {
+  for(let i = 128; i < result_data.length; i += 512) {
     projects.push({
       id: hex2num(result_data.substring(i, i + 64)),
       title: hex2str(result_data.substring(i + 64, i + 128)),
@@ -43,6 +43,7 @@ export function decodeProjectData(result_data) {
       startDate: hex2num(result_data.substring(i + 256, i + 320)),
       endDate: hex2num(result_data.substring(i + 320, i + 384)),
       salary: hex2num(result_data.substring(i + 384, i + 448)),
+      staffAccountId: "0.0." + hex2num(result_data.substring(i + 448, i + 512)),
     });
   }
   return projects;

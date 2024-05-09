@@ -4,13 +4,13 @@ import './FacultyPage.css';
 import MyLog from '../MyLog';
 import { ProjectStatus } from '../../utils';
 import FacultyRegister from './FacultyRegister';
-import { fetchProjectStaffs, fetchProjects } from '../hedera/contractQueries';
+import { fetchProjects } from '../hedera/contractQueries';
 import { approveProject } from '../hedera/contractUtils';
+import MyButton from '../MyButton';
 
 const FacultyPage = ({walletData, accountId, contractId, setPage, isRegistered, setIsRegistered}) => {
   const [logText, setLogText] = useState("Welcome IITM Faculty...");
   const [projects, setProjects] = useState([]);
-  const [projectStaffs, setProjectStaffs] = useState([]);
 
   const fetchData = async () => {
     if(!contractId) {
@@ -19,10 +19,6 @@ const FacultyPage = ({walletData, accountId, contractId, setPage, isRegistered, 
     }
     setProjects((await fetchProjects(walletData, accountId, contractId, false).catch((e) => {
       setLogText("Error fetching projects ...");
-      return [];
-    })));
-    setProjectStaffs((await fetchProjectStaffs(walletData, accountId, contractId).catch((e) => {
-      setLogText("Error fetching project staffs ...");
       return [];
     })));
   };
@@ -61,7 +57,12 @@ const FacultyPage = ({walletData, accountId, contractId, setPage, isRegistered, 
               {projects
                 .filter((project) => project.status === ProjectStatus.PENDING)
                 .map((project) => (
-                <li key={project.id}>{project.title}</li>
+                <li key={project.id} className='list-element'>
+                  <span>{project.title}</span>
+                  <span>{project.description}</span>
+                  <MyButton fcn={() => approveSelectedProject(project.id, true)} buttonLabel="Approve" />
+                  <MyButton fcn={() => approveSelectedProject(project.id, false)} buttonLabel="Reject"/>
+                </li>
               ))}
             </ul>
           </div>
@@ -71,7 +72,12 @@ const FacultyPage = ({walletData, accountId, contractId, setPage, isRegistered, 
             {projects
                 .filter((project) => project.status === ProjectStatus.EXTENSION)
                 .map((project) => (
-                <li key={project.id}>{project.title}</li>
+                <li key={project.id} className='list-element'>
+                  <span>{project.title + ":  "}</span>
+                  <span>{project.description}</span>
+                  <MyButton fcn={() => approveSelectedProject(project.id, true)} buttonLabel="Approve" />
+                  <MyButton fcn={() => approveSelectedProject(project.id, false)} buttonLabel="Reject"/>
+                </li>
               ))}
             </ul>
           </div>

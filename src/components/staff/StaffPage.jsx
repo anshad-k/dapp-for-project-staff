@@ -19,7 +19,7 @@ const StaffPage = ({walletData, accountId, contractId, setPage, isRegistered, se
       setLogText("No contracts deployed ...");
       return;
     }
-    setProjects((await fetchProjects(walletData, accountId, contractId, true).catch((e) => {
+    setProjects((await fetchProjects(walletData, accountId, contractId, false).catch((e) => {
       setLogText("Error fetching projects ...");
       return [];
     })));
@@ -61,8 +61,11 @@ const StaffPage = ({walletData, accountId, contractId, setPage, isRegistered, se
           <h2>Your Projects</h2>
           <ul>
             {projects
-              .map((project) => (
-              <li key={project.id}>{project.name}</li>
+              .map((project, idx) => (
+              <li key={project.id} className="list-element">
+                <span>{project.title + ":  "}</span>
+                <span>{project.description}</span>
+              </li>
             ))}
           </ul>
         </div>

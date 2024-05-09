@@ -2,6 +2,9 @@ import {
 	ContractFunctionParameters,
 	ContractExecuteTransaction, 
 	ContractId,
+	TransferTransaction,
+	Hbar,
+	AccountId
 } from "@hashgraph/sdk";
 import { fetchTransactionRecord } from "../../utils";
 
@@ -90,6 +93,10 @@ export async function addProject(walletData, accountId, contractId, project) {
 
 	const signer = getSigner(walletData, accountId);
 
+	if(project.startDate > project.endDate || project.salary <= 0 || project.staffIds.length === 0 || project.facultyIds.length === 0) {
+		console.log(`Invalid project data...`);
+		return false;
+	}
 	//Execute a contract function (transfer)
 	const contractExecTx = await new ContractExecuteTransaction()
 		.setContractId(ContractId.fromString(contractId))
@@ -154,7 +161,7 @@ export async function approveProject(walletData, accountId, contractId, projectI
 	//Execute a contract function (transfer)
 	const contractExecTx = await new ContractExecuteTransaction()
 		.setContractId(ContractId.fromString(contractId))
-		.setGas(3000000)
+		.setGas(1000000)
 		.setFunction("approveProject", 
 			new ContractFunctionParameters()
 				.addUint16(projectId)
@@ -171,4 +178,22 @@ export async function approveProject(walletData, accountId, contractId, projectI
 	const returnValue = Number(result.actions[0].result_data);
 
 	return returnValue === 2;
+}
+
+export async function paySalary(walletData, accountId, receiver, amount) {
+	console.log(`\n=======================================`);
+	console.log(`- Paying salary for a project in the contract...`);
+
+	const signer = getSigner(walletData, accountId);
+
+	//Execute a contract function (transfer)
+	const transferTx = new TransferTransaction()
+        .addHbarTransfer(AccountId.fromString(accountId), Hbar.fromTinybars(-1 * amount))
+        .addHbarTransfer(AccountId.fromString(receiver), Hbar.fromTinybars(amount))
+        .freezeWithSigner(signer);
+    const transferSign = await transferTx.signWithSigner(signer);
+    const transferSubmit = await transferSign.executeWithSigner(signer);
+		const transferReceipt = await transferSubmit.getReceipt(signer);
+
+		console.log(`- The transfer status is: ${transferReceipt.status.toString()}`);
 }

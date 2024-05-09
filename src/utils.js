@@ -27,8 +27,13 @@ export function hex2str(hexx) {
 	if(hex.substring(0, 2) === '0x') {
 		hex = hex.substring(2);
 	}
-	for (let i = 0; i < hex.length; i += 2)
-			str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
+	for (let i = 0; i < hex.length; i += 2) {
+			const chr = String.fromCharCode(parseInt(hex.substr(i, 2), 16));
+			if(chr === '\u0000') {
+				break;
+			}
+			str += chr;
+	}
 	return str;
 }
 

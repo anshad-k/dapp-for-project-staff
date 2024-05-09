@@ -55,6 +55,7 @@ contract projectStaffContractIITM {
         uint64 startDate;
         uint64 endDate;
         uint32 salary;
+        address staffAddress;
     }
 
     struct ProjectStaff {
@@ -147,7 +148,7 @@ contract projectStaffContractIITM {
       require(projects.length < MAX_PROJECTS, "5 : max number of projects reached");
       require(
         1 < _facultyIds.length && _facultyIds.length <= 4 &&
-        1 <= _projectStaffIds.length && _projectStaffIds.length <= 4,
+        0 <= _projectStaffIds.length && _projectStaffIds.length <= 4,
         "5 : does not satisfy staff and faculty requirement"
       );
 
@@ -248,7 +249,8 @@ contract projectStaffContractIITM {
             status: projects[i].status,
             startDate: projects[i].startDate,
             endDate: projects[i].endDate,
-            salary: projects[i].salary
+            salary: projects[i].salary,
+            staffAddress: projectStaffs[projects[i].projectStaffs[0] - 1].staffAddress
           });
         }
         return allProjects;
@@ -271,7 +273,8 @@ contract projectStaffContractIITM {
             status: proj.status,
             startDate: proj.startDate,
             endDate: proj.endDate,
-            salary: proj.salary
+            salary: proj.salary,
+            staffAddress: projectStaffs[proj.projectStaffs[0] - 1].staffAddress
           });
       }
       return userProjects;
